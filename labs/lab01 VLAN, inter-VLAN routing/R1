@@ -1,12 +1,12 @@
-R1#sh run
+R1(config)#do sh run
 Building configuration...
 
-Current configuration : 1281 bytes
+Current configuration : 1287 bytes
 !
 version 15.4
 service timestamps debug datetime msec
 service timestamps log datetime msec
-no service password-encryption
+service password-encryption
 !
 hostname R1
 !
@@ -119,7 +119,7 @@ line con 0
  login local
 line aux 0
 line vty 0 4
- password cisco
+ password 7 01100F175804
  login local
  transport input none
 !
