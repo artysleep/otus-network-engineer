@@ -1,0 +1,113 @@
+S1#sh run
+Building configuration...
+
+Current configuration : 1430 bytes
+!
+! Last configuration change at 09:54:41 MSK Mon Jul 8 2024 by cisco
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname S1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$6IOg$uBp14oxXhLsKGltoxj22u/
+!
+username cisco secret 5 $1$ZSBs$TGm.96KVB2IAujfJRuYJc1
+no aaa new-model
+clock timezone MSK 3 0
+!
+!
+!
+!
+!
+vtp mode off
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+vlan 3
+ name Management
+!
+vlan 4
+ name Operations
+!
+vlan 7
+ name ParkingLot
+!
+vlan 8
+ name Native
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ description "to S2 e0/0"
+ switchport trunk allowed vlan 3,4,7
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+!
+interface Ethernet0/2
+ description "to PC-A"
+ switchport access vlan 3
+ switchport mode access
+!
+interface Ethernet0/3
+ description "to R1 e0/1"
+ switchport trunk allowed vlan 3,4,7
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Vlan3
+ ip address 192.168.3.11 255.255.255.0
+!
+ip default-gateway 192.168.3.1
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ logging synchronous
+ login local
+line aux 0
+line vty 0 4
+ password 7 01100F175804
+ login local
+ transport input none
+!
+!
+end

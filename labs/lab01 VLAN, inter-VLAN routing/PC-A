@@ -1,0 +1,10 @@
+VPCS> show
+
+NAME   IP/MASK              GATEWAY                             GATEWAY
+VPCS1  192.168.3.3/24       192.168.3.1
+       fe80::250:79ff:fe66:6804/64
+
+VPCS> ping 192.168.4.3
+
+84 bytes from 192.168.4.3 icmp_seq=1 ttl=63 time=3.749 ms
+84 bytes from 192.168.4.3 icmp_seq=2 ttl=63 time=3.508 ms
