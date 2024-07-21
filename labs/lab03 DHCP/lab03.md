@@ -5,7 +5,7 @@
 
 Экспорт лабораторной работы из EVE-NG:
 
-- [DHCP.zip](export_zip/DHCPv4.zip)
+- [DHCPv4.zip](export_zip/DHCPv4.zip)
 
 # DHCPv4:
 ## Получение адреса PC-A:
@@ -78,6 +78,9 @@ trace to 192.168.1.6, 8 hops max, press Ctrl+C to stop
 - [R2](R2)
 
 # DHCPv6:
+Экспорт лабораторной работы из EVE-NG:
+
+- [DHCPv6.zip](export_zip/DHCPv6.zip)
 
 ## Включение SLAAC на R1:
 ```
