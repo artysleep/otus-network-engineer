@@ -1,0 +1,119 @@
+R2#sh run
+Building configuration...
+
+Current configuration : 1239 bytes
+!
+! Last configuration change at 21:11:05 MSK Sun Jul 21 2024 by cisco
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$6IOg$uBp14oxXhLsKGltoxj22u/
+!
+no aaa new-model
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco secret 5 $1$ZSBs$TGm.96KVB2IAujfJRuYJc1
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ description "to R1 e0/0"
+ ip address 10.0.0.2 255.255.255.252
+!
+interface Ethernet0/1
+ description "to S2"
+ ip address 192.168.1.97 255.255.255.240
+ ip helper-address 10.0.0.1
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+ip default-gateway 10.0.0.1
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.0.1
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+ login local
+line aux 0
+line vty 0 4
+ password 7 01100F175804
+ login local
+ transport input none
+!
+!
+end
