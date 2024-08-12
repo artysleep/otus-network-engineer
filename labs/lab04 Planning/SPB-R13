@@ -1,0 +1,21 @@
+interface Ethernet0/0
+ no ip address
+interface Ethernet0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.3 255.255.255.0
+ glbp 10 ip 192.168.10.1
+ glbp 10 load-balancing host-dependent
+interface Ethernet0/0.11
+ encapsulation dot1Q 11
+ ip address 192.168.11.3 255.255.255.0
+ glbp 11 ip 192.168.11.1
+ glbp 11 load-balancing host-dependent
+interface Ethernet0/1
+ no ip address
+interface Ethernet0/1.55
+ description MGMT
+ encapsulation dot1Q 55
+ ip address 172.16.254.3 255.255.255.240
+ glbp 55 ip 172.16.254.1
+ glbp 55 load-balancing host-dependent
+interface Ethernet0/2
