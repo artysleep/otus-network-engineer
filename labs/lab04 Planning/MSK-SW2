@@ -1,9 +1,6 @@
-MSK-SW2(config-if)#do sh run
-Building configuration...
-
-Current configuration : 1220 bytes
+Current configuration : 1258 bytes
 !
-! Last configuration change at 12:53:42 UTC Mon Aug 12 2024
+! Last configuration change at 16:29:23 UTC Mon Aug 12 2024
 !
 version 15.2
 service timestamps debug datetime msec
@@ -85,6 +82,7 @@ ip forward-protocol nd
 no ip http server
 no ip http secure-server
 !
+ip route 0.0.0.0 0.0.0.0 172.16.254.1
 !
 !
 !

@@ -1,13 +1,13 @@
-Current configuration : 1685 bytes
+Current configuration : 1279 bytes
 !
-! Last configuration change at 09:36:22 UTC Tue Aug 13 2024
+! Last configuration change at 13:56:24 UTC Tue Aug 13 2024
 !
 version 15.4
 service timestamps debug datetime msec
 service timestamps log datetime msec
 no service password-encryption
 !
-hostname MSK-R13
+hostname LMS-R21
 !
 boot-start-marker
 boot-end-marker
@@ -63,40 +63,23 @@ redundancy
 !
 !
 interface Loopback0
- ip address 172.16.255.13 255.255.255.255
+ ip address 172.16.255.21 255.255.255.255
 !
 interface Ethernet0/0
- no ip address
-!
-interface Ethernet0/0.10
- encapsulation dot1Q 10
- ip address 192.168.10.3 255.255.255.0
- glbp 10 ip 192.168.10.1
- glbp 10 load-balancing host-dependent
-!
-interface Ethernet0/0.11
- encapsulation dot1Q 11
- ip address 192.168.11.3 255.255.255.0
- glbp 11 ip 192.168.11.1
- glbp 11 load-balancing host-dependent
+ description "to MSK-R15.e0/2"
+ ip address 10.0.254.18 255.255.255.254
 !
 interface Ethernet0/1
- no ip address
-!
-interface Ethernet0/1.55
- description MGMT
- encapsulation dot1Q 55
- ip address 172.16.254.3 255.255.255.240
- glbp 55 ip 172.16.254.1
- glbp 55 load-balancing host-dependent
+ description "to KTN-R22.e0/1"
+ ip address 10.0.254.20 255.255.255.254
 !
 interface Ethernet0/2
- description "to R15.e0/0"
- ip address 10.0.254.9 255.255.255.254
+ description "to TRD-R24.e0/0"
+ ip address 10.0.254.41 255.255.255.254
 !
 interface Ethernet0/3
- description 'to R14.e0/1"
- ip address 10.0.254.3 255.255.255.254
+ no ip address
+ shutdown
 !
 interface Ethernet1/0
  no ip address

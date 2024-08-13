@@ -1,0 +1,128 @@
+Current configuration : 1500 bytes
+!
+! Last configuration change at 12:49:35 UTC Tue Aug 13 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname SPB-R17
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.17 255.255.255.255
+!
+interface Ethernet0/0
+ description "to SPB-SW10.e0/3"
+ no ip address
+!
+interface Ethernet0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.3 255.255.255.0
+ glbp 20 ip 192.168.20.1
+ glbp 20 load-balancing host-dependent
+!
+interface Ethernet0/0.21
+ encapsulation dot1Q 21
+ ip address 192.168.21.3 255.255.255.0
+ glbp 21 ip 192.168.21.1
+ glbp 21 load-balancing host-dependent
+!
+interface Ethernet0/1
+ description 'to SPB-R18.e0/1'
+ ip address 10.0.254.73 255.255.255.254
+!
+interface Ethernet0/2
+ description "to SPB-SW9.e1/0"
+ no ip address
+!
+interface Ethernet0/2.55
+ encapsulation dot1Q 55
+ ip address 172.16.254.19 255.255.255.240
+ glbp 55 ip 172.16.254.17
+ glbp 55 load-balancing host-dependent
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end

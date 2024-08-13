@@ -1,9 +1,6 @@
-MSK-R12(config)#do sh run
-Building configuration...
-
-Current configuration : 1539 bytes
+Current configuration : 1723 bytes
 !
-! Last configuration change at 15:08:30 UTC Mon Aug 12 2024
+! Last configuration change at 13:07:21 UTC Tue Aug 13 2024
 !
 version 15.4
 service timestamps debug datetime msec
@@ -65,6 +62,12 @@ redundancy
 !
 !
 !
+interface Loopback0
+ ip address 172.16.255.12 255.255.255.255
+!
+interface Loopback1
+ no ip address
+!
 interface Ethernet0/0
  no ip address
 !
@@ -91,12 +94,12 @@ interface Ethernet0/1.55
  glbp 55 load-balancing host-dependent
 !
 interface Ethernet0/2
- no ip address
- shutdown
+ description "to R14.e0/0"
+ ip address 10.0.254.13 255.255.255.254
 !
 interface Ethernet0/3
- no ip address
- shutdown
+ description "to R12.e0/3"
+ ip address 10.0.254.7 255.255.255.254
 !
 interface Ethernet1/0
  no ip address
