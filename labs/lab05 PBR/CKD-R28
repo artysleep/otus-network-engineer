@@ -1,0 +1,173 @@
+Current configuration : 2511 bytes
+!
+! Last configuration change at 16:48:53 UTC Wed Aug 14 2024
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname CKD-R28
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+track 1 ip sla 1 reachability
+ delay down 10 up 5
+!
+track 2 ip sla 2 reachability
+ delay down 10 up 5
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.28 255.255.255.255
+!
+interface Ethernet0/0
+ description "to TRD-R26.e0/1"
+ ip address 10.0.254.139 255.255.255.254
+!
+interface Ethernet0/1
+ description "to TRD-R25.e0/3"
+ ip address 10.0.254.141 255.255.255.254
+!
+interface Ethernet0/2
+ description "to CKD-SW29.e0/2"
+ no ip address
+!
+interface Ethernet0/2.30
+ encapsulation dot1Q 30
+ ip address 192.168.30.1 255.255.255.0
+ ip policy route-map PBR
+!
+interface Ethernet0/2.31
+ encapsulation dot1Q 31
+ ip address 192.168.31.1 255.255.255.0
+ ip policy route-map PBR
+!
+interface Ethernet0/2.55
+ encapsulation dot1Q 55
+ ip address 172.16.254.33 255.255.255.248
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.254.138 11 track 1
+ip route 0.0.0.0 0.0.0.0 10.0.254.140 12 track 2
+!
+ip access-list standard VLAN30
+ permit 192.168.30.0 0.0.0.255
+ip access-list standard VLAN31
+ permit 192.168.31.0 0.0.0.255
+!
+ip sla 1
+ icmp-echo 10.0.254.138 source-ip 10.0.254.139
+ frequency 10
+ip sla schedule 1 life forever start-time now
+ip sla 2
+ icmp-echo 10.0.254.140 source-ip 10.0.254.141
+ frequency 10
+ip sla schedule 2 life forever start-time now
+!
+route-map PBR permit 10
+ match ip address VLAN30
+ set ip next-hop verify-availability 10.0.254.138 10 track 1
+ set ip next-hop verify-availability 10.0.254.140 20 track 2
+!
+route-map PBR permit 20
+ match ip address VLAN31
+ set ip next-hop verify-availability 10.0.254.140 10 track 2
+ set ip next-hop verify-availability 10.0.254.138 20 track 1
+!
+route-map PBR deny 30
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end
