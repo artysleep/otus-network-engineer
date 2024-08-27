@@ -1,0 +1,185 @@
+["Building configuration...
+
+Current configuration : 2612 bytes
+!
+! Last configuration change at 11:02:14 MSK Tue Aug 27 2024 by cisco
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname MSK-R15
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 05080F1C2243
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip domain name otus.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 password 7 1511021F0725
+!
+redundancy
+!
+!
+ip ssh version 2
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.15 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address FC00::15/128
+ ospfv3 2 ipv6 area 0
+!
+interface Ethernet0/0
+ description \"to R13.e0/2\"
+ ip address 10.0.254.8 255.255.255.254
+ ip ospf 1 area 10
+ ip ospf cost 100
+ ipv6 address FC02::8/127
+ ospfv3 2 ipv6 area 10
+ ospfv3 2 ipv6 cost 100
+!
+interface Ethernet0/1
+ description \"to R12.e0/3\"
+ ip address 10.0.254.6 255.255.255.254
+ ip ospf 1 area 10
+ ipv6 address FC02::6/127
+ ospfv3 2 ipv6 area 10
+!
+interface Ethernet0/2
+ description \"to LMS-R21.e0/0\"
+ ip address 10.0.254.19 255.255.255.254
+ ipv6 address FC02::19/127
+!
+interface Ethernet0/3
+ description \"to MSK-R20\"
+ ip address 10.0.254.10 255.255.255.254
+ ip ospf network point-to-point
+ ip ospf 1 area 102
+ ipv6 address FC02::10/127
+ ospfv3 network point-to-point
+ ospfv3 2 ipv6 area 102
+!
+interface Ethernet1/0
+ description \"to R14.e1/0 for OSPF\"
+ ip address 10.0.254.15 255.255.255.254
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address FC02::15/127
+ ospfv3 network point-to-point
+ ospfv3 2 ipv6 area 0
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router ospfv3 2
+ area 10 stub
+ !
+ address-family ipv6 unicast
+  area 102 filter-list prefix 6101 in
+ exit-address-family
+!
+router ospf 1
+ area 10 stub
+ area 102 filter-list prefix 101 in
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+ip prefix-list 101 seq 5 deny 10.0.254.4/31
+ip prefix-list 101 seq 10 deny 172.16.255.19/32
+ip prefix-list 101 seq 15 permit 0.0.0.0/0 le 32
+!
+!
+ipv6 prefix-list 6101 seq 5 deny FC02::4/127
+ipv6 prefix-list 6101 seq 10 deny FC00::19/128
+ipv6 prefix-list 6101 seq 15 permit ::/0 le 128
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+!
+end"]

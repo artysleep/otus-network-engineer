@@ -274,6 +274,6 @@ Client: FE80::A8BB:CCFF:FE00:6000
             preferred lifetime 86400, valid lifetime 172800
             expires at Jul 23 2024 10:24 PM (172625 seconds)
 ```
-## Конфиги устройств:
+### Конфиги устройств:
 - [R1](R1v6)
 - [R2](R2v6)
