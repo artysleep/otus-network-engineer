@@ -1,0 +1,196 @@
+TRD-R25#sh run
+Building configuration...
+
+Current configuration : 3174 bytes
+!
+! Last configuration change at 18:06:47 MSK Thu Sep 12 2024 by cisco
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname TRD-R25
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 02050D480809
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip domain name otus.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 password 7 121A0C041104
+!
+redundancy
+!
+!
+track 1 ip sla 1 reachability
+ delay down 10 up 5
+!
+track 2 ip sla 2 reachability
+ delay down 10 up 5
+!
+track 10 list boolean and
+ object 1
+ object 2
+ delay down 10 up 5
+!
+track 11 list boolean and
+ object 1
+ object 2 not
+ delay down 10 up 5
+!
+track 12 list boolean and
+ object 1 not
+ object 2
+ delay down 10 up 5
+!
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.25 255.255.255.255
+ ip router isis 1
+ ipv6 address FC00::25/128
+ ipv6 router isis 1
+!
+interface Ethernet0/0
+ description "to TRD-R23.e0/1"
+ ip address 10.0.254.53 255.255.255.254
+ ip router isis 1
+ ipv6 address FC02::53/127
+ ipv6 router isis 1
+!
+interface Ethernet0/1
+ description "to LBT-R27.e0/0"
+ ip address 10.0.254.88 255.255.255.254
+ ipv6 address FC02::88/127
+!
+interface Ethernet0/2
+ description "to TRD-26.e0/2"
+ ip address 10.0.254.56 255.255.255.254
+ ip router isis 1
+ ipv6 address FC02::56/127
+ ipv6 router isis 1
+!
+interface Ethernet0/3
+ description "to CKD-R28.e0/1"
+ ip address 10.0.254.140 255.255.255.254
+ ipv6 address FC02::140/127
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router isis 1
+ net 49.2222.0000.0000.0025.00
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 172.16.254.32 255.255.255.248 10.0.254.141 10 name "MGMT direct to CKD-R28" track 1
+ip route 172.16.254.32 255.255.255.248 10.0.254.57 12 name "MGMT through TRD-R26 if link to CKD-R28 down" track 2
+ip route 192.168.31.0 255.255.255.0 10.0.254.141 10 name "VLAN31 to CKD-R28 directly" track 10
+ip route 192.168.30.0 255.255.255.0 10.0.254.57 10 name "VLAN30 through TRD-R26 " track 10
+ip route 192.168.30.0 255.255.254.0 10.0.254.141 11 name "both through CKD-R28 directly if link to TRD-26 down" track 11
+ip route 192.168.30.0 255.255.254.0 10.0.254.57 12 name "both through TRD-R26 if link to CKD-R28 down" track 12
+ip route 10.0.254.68 255.255.255.254 10.0.254.57 name "for ICMP check"
+ip route 10.0.254.138 255.255.255.254 10.0.254.57 name "for check"
+!
+ip sla 1
+ icmp-echo 10.0.254.141 source-ip 10.0.254.140
+ frequency 10
+ip sla schedule 1 life forever start-time now
+ip sla 2
+ icmp-echo 10.0.254.138 source-ip 10.0.254.56
+ frequency 10
+ip sla schedule 2 life forever start-time now
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+!
+end
