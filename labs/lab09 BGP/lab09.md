@@ -104,7 +104,7 @@ router bgp 2042
 ```
 
 Проверка доступности между пограничными роутерами Москвы с пограничным роутером СПБ:
-cfg```
+```cfg
 MSK-R14#sh ip int br
 Interface                  IP-Address      OK? Method Status                Protocol
 Ethernet0/0                10.0.254.12     YES NVRAM  up                    up
@@ -174,7 +174,6 @@ RPKI validation codes: V valid, I invalid, N Not found
  *>  172.16.255.22/32 10.0.254.18                            0 301 101 i
  *>  172.16.255.23/32 10.0.254.18                            0 301 101 520 i
  *>  172.16.255.24/32 10.0.254.18                            0 301 520 i
-
 
 SPB-R18#sh ip bgp
 BGP table version is 12, local router ID is 172.16.255.18
