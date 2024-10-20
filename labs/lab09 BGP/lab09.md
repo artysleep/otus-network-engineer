@@ -197,7 +197,7 @@ RPKI validation codes: V valid, I invalid, N Not found
  *>  172.16.255.26/32 10.0.254.68              0             0 520 i
 ```
 
-cfg```
+```cfg
 MSK-R14#ping 10.0.254.67
 Type escape sequence to abort.
 Sending 5, 100-byte ICMP Echos to 10.0.254.67, timeout is 2 seconds:
