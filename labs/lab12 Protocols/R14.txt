@@ -1,0 +1,207 @@
+["Building configuration...
+
+Current configuration : 3216 bytes
+!
+! Last configuration change at 16:12:25 MSK Thu Nov 28 2024 by cisco
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname MSK-R14
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 094F471A1A0A
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name otus.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 password 7 094F471A1A0A
+!
+redundancy
+!
+!
+ip ssh version 2
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.14 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address FC00::14/128
+ ospfv3 2 ipv6 area 0
+!
+interface Ethernet0/0
+ description \"to R12.e0/2\"
+ ip address 10.0.254.12 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 1 area 10
+ ipv6 address FC02::12/127
+ ospfv3 2 ipv6 area 10
+!
+interface Ethernet0/1
+ description \"to R13.e0/3\"
+ ip address 10.0.254.2 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 1 area 10
+ ip ospf cost 100
+ ipv6 address FC02::2/127
+ ospfv3 2 ipv6 area 10
+ ospfv3 2 ipv6 cost 100
+!
+interface Ethernet0/2
+ description \"to KTN-R22.e0/0\"
+ ip address 10.77.254.1 255.255.255.224
+ ip nat outside
+ ip virtual-reassembly in
+ ipv6 address FC02::17/127
+!
+interface Ethernet0/3
+ description \"to R19.e0/0\"
+ ip address 10.0.254.4 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf network point-to-point
+ ip ospf 1 area 101
+ ipv6 address FC02::4/127
+ ospfv3 network point-to-point
+ ospfv3 2 ipv6 area 101
+!
+interface Ethernet1/0
+ description \"to R15.e1/0 for OSPF\"
+ ip address 10.0.254.14 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address FC02::14/127
+ ospfv3 network point-to-point
+ ospfv3 2 ipv6 area 0
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router ospfv3 2
+ area 10 stub
+ area 101 stub no-summary
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+router ospf 1
+ area 10 stub
+ area 101 stub no-summary
+!
+router bgp 1001
+ bgp router-id 172.16.255.14
+ bgp log-neighbor-changes
+ network 10.0.254.16 mask 255.255.255.254
+ network 10.77.254.0 mask 255.255.255.224
+ network 172.16.255.14 mask 255.255.255.255
+ redistribute ospf 1
+ neighbor 10.77.254.30 remote-as 101
+ neighbor 10.77.254.30 soft-reconfiguration inbound
+ neighbor 172.16.255.15 remote-as 1001
+ neighbor 172.16.255.15 update-source Loopback0
+!
+ip forward-protocol nd
+!
+ip as-path access-list 1 permit ^$
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 78 interface Ethernet0/2 overload
+ip nat inside source static 10.0.254.5 10.77.254.14
+!
+!
+!
+access-list 78 permit 192.168.10.0 0.0.1.255
+access-list 78 permit 172.16.254.0 0.0.0.15
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+ntp server 172.16.255.12
+ntp server 172.16.255.13
+!
+end"]
