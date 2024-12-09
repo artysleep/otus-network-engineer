@@ -16,7 +16,7 @@
 
 Экспорт лабораторной работы из EVE-NG:
 
-- [Protocols.zip](export_zip/Protocols.zip)
+- [Protocols.zip](export_zip/lab11_BGP_Filter.zip)
 
 - ##### Настройте NAT(PAT) на R14 и R15. Трансляция должна осуществляться в адрес автономной системы AS1001.
 Настройка на R14 и R15:

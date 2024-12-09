@@ -1,0 +1,245 @@
+MSK-R14#sh run
+Building configuration...
+
+Current configuration : 4322 bytes
+!
+! Last configuration change at 16:17:56 MSK Mon Dec 9 2024 by cisco
+! NVRAM config last updated at 16:16:52 MSK Mon Dec 9 2024 by cisco
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname MSK-R14
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 094F471A1A0A
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name otus.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 password 7 094F471A1A0A
+!
+redundancy
+!
+!
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.14 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address FC00::14/128
+ ospfv3 2 ipv6 area 0
+!
+interface Tunnel101
+ ip address 10.77.78.2 255.255.255.254
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source 10.77.254.1
+ tunnel destination 10.78.254.1
+!
+interface Tunnel150
+ ip address 10.77.0.1 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ no ip next-hop-self eigrp 77
+ no ip split-horizon eigrp 77
+ ip nhrp authentication OTUS
+ ip nhrp map multicast dynamic
+ ip nhrp network-id 150
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/2
+ tunnel mode gre multipoint
+!
+interface Ethernet0/0
+ description "to R12.e0/2"
+ ip address 10.0.254.12 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 1 area 10
+ ipv6 address FC02::12/127
+ ospfv3 2 ipv6 area 10
+!
+interface Ethernet0/1
+ description "to R13.e0/3"
+ ip address 10.0.254.2 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 1 area 10
+ ip ospf cost 100
+ ipv6 address FC02::2/127
+ ospfv3 2 ipv6 area 10
+ ospfv3 2 ipv6 cost 100
+!
+interface Ethernet0/2
+ description "to KTN-R22.e0/0"
+ ip address 10.77.254.1 255.255.255.224
+ ip nat outside
+ ip virtual-reassembly in
+ ipv6 address FC02::17/127
+!
+interface Ethernet0/3
+ description "to R19.e0/0"
+ ip address 10.0.254.4 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf network point-to-point
+ ip ospf 1 area 101
+ ipv6 address FC02::4/127
+ ospfv3 network point-to-point
+ ospfv3 2 ipv6 area 101
+!
+interface Ethernet1/0
+ description "to R15.e1/0 for OSPF"
+ ip address 10.0.254.14 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address FC02::14/127
+ ospfv3 network point-to-point
+ ospfv3 2 ipv6 area 0
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+!
+router eigrp 77
+ network 10.77.0.0 0.0.0.255
+ network 172.16.254.0 0.0.0.15
+ network 192.168.10.0 0.0.1.255
+!
+router ospfv3 2
+ area 10 stub
+ area 101 stub no-summary
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+router ospf 1
+ area 10 stub
+ area 101 stub no-summary
+!
+router bgp 1001
+ bgp router-id 172.16.255.14
+ bgp log-neighbor-changes
+ network 10.0.254.16 mask 255.255.255.254
+ network 10.77.254.0 mask 255.255.255.224
+ network 172.16.255.14 mask 255.255.255.255
+ neighbor 10.77.254.30 remote-as 101
+ neighbor 10.77.254.30 soft-reconfiguration inbound
+ neighbor 172.16.255.15 remote-as 1001
+ neighbor 172.16.255.15 update-source Loopback0
+!
+ip forward-protocol nd
+!
+ip as-path access-list 1 permit ^$
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 78 interface Ethernet0/2 overload
+ip nat inside source static 10.0.254.5 10.77.254.14
+ip route 192.168.10.0 255.255.254.0 Null0
+ip route 192.168.20.0 255.255.254.0 Tunnel101
+!
+!
+ip prefix-list NO-INT-NETS seq 10 deny 192.168.10.0/23 le 32
+ip prefix-list NO-INT-NETS seq 15 deny 0.0.0.0/0 le 32
+ip prefix-list NO-INT-NETS seq 20 deny 172.16.254.0/28 le 32
+ip prefix-list NO-INT-NETS seq 40 permit 172.16.255.0/24 le 32
+ip prefix-list NO-INT-NETS seq 50 permit 10.254.0.0/16 le 32
+!
+route-map REDISTRIBUTE-OSPF-TO-BGP permit 10
+ match ip address prefix-list NO-INT-NETS
+!
+!
+access-list 78 permit 192.168.10.0 0.0.1.255
+access-list 78 permit 172.16.254.0 0.0.0.15
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+ntp server 172.16.255.12
+ntp server 172.16.255.13
+!
+end
