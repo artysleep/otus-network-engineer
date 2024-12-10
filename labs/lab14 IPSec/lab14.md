@@ -1,327 +1,633 @@
 # Протоколы сети интернет
 
 ### Цели:
-- ##### Настроить DHCP в офисе Москва
-- ##### Настроить синхронизацию времени в офисе Москва
-- ##### Настроить NAT в офисе Москва, C.-Перетбруг и Чокурдах
+- ##### Настроить GRE поверх IPSec между офисами Москва и С.-Петербург
+- ##### Настроить DMVPN поверх IPSec между офисами Москва и Чокурдах, Лабытнанги
 
 ### Описание/Пошаговая инструкция выполнения домашнего задания:
-- ##### Настройте NAT(PAT) на R14 и R15. Трансляция должна осуществляться в адрес автономной системы AS1001.
-- ##### Настройте NAT(PAT) на R18. Трансляция должна осуществляться в пул из 5 адресов автономной системы AS2042.
-- ##### Настройте статический NAT для R20.
-- ##### Настройте NAT так, чтобы R19 был доступен с любого узла для удаленного управления.
-- ##### * Настройте статический NAT(PAT) для офиса Чокурдах.
-- ##### Настроите для IPv4 DHCP сервер в офисе Москва на маршрутизаторах R12 и R13. VPC1 и VPC7 должны получать сетевые настройки по DHCP.
-- ##### Настройте NTP сервер на R12 и R13. Все устройства в офисе Москва должны синхронизировать время с R12 и R13.
+- ##### Настроите GRE поверх IPSec между офисами Москва и С.-Петербург
+- ##### Настроите DMVPN поверх IPSec между Москва и Чокурдах, Лабытнанги
+- ##### Для IPSec использовать CA и сертификаты
+
 
 Экспорт лабораторной работы из EVE-NG:
 
-- [Protocols.zip](export_zip/lab11_BGP_Filter.zip)
+- [IPsec.zip](export_zip/IPsec.zip)
 
-- ##### Настройте NAT(PAT) на R14 и R15. Трансляция должна осуществляться в адрес автономной системы AS1001.
-Настройка на R14 и R15:
+- ##### Настроите GRE поверх IPSec между офисами Москва и С.-Петербург
+Настройка на R15 туннеля между офисами СПБ и МСК:
 ```cfg
-access-list 78 permit 172.16.254.0 0.0.0.15
-access-list 78 permit 192.168.10.0 0.0.1.255
-
-ip nat inside source list 78 interface Ethernet0/2 overload
-
-interface Ethernet0/0
-  ip nat inside
-
-interface Ethernet0/1
-  ip nat inside
-
-interface Ethernet0/2
- ip nat outside
-
+crypto ikev2 proposal IKEv2PROPOSAL-SPB
+ encryption aes-cbc-128
+ integrity md5
+ group 2
 !
-interface Ethernet1/0
- ip nat inside
+crypto ikev2 policy IKEv2POLICY-SPB
+ proposal IKEv2PROPOSAL-SPB
+!
+crypto ikev2 keyring IKEv2KEY-SPB
+ peer SPB-R18
+  address 10.77.78.1
+  pre-shared-key OTUS
+ !
+!
+!
+crypto ikev2 profile IKEv2PROFILE-SPB
+ match identity remote address 10.78.254.1 255.255.255.255
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local IKEv2KEY-SPB
+!
+!
+!
+crypto ipsec transform-set IPSECTS-SPB esp-aes esp-md5-hmac
+ mode transport
+!
+crypto ipsec profile IPSECPROFILE-SPB
+ set transform-set IPSECTS-SPB
+ set ikev2-profile IKEv2PROFILE-SPB
+
+interface Tunnel100
+ description "GRE-to-SPB"
+ ip address 10.77.78.0 255.255.255.254
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source 10.77.254.33
+ tunnel destination 10.78.254.1
+ tunnel protection ipsec profile IPSECPROFILE-SPB
 ```
 
-
+Настройка на R18:
 ```cfg
-MSK-VPC1> ping 192.168.21.10
+crypto ikev2 proposal IKEv2PROPOSAL-MSK
+ encryption aes-cbc-128
+ integrity md5
+ group 2
+!
+crypto ikev2 policy IKEv2POLICY-MSK
+ proposal IKEv2PROPOSAL-MSK
+!
+crypto ikev2 keyring IKEv2KEY-MSK
+ peer SPB-R15
+  address 10.77.78.0 255.255.255.0
+  pre-shared-key OTUS
+ !
+!
+crypto ikev2 profile IKEv2PROFILE-MSK
+ match identity remote address 10.77.254.33 255.255.255.255
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local IKEv2KEY-MSK
+!
+crypto ipsec transform-set IPSECTS-MSK esp-aes esp-md5-hmac
+ mode transport
+!
+crypto ipsec profile IPSECPROFILE-MSK
+ set transform-set IPSECTS-MSK
+ set ikev2-profile IKEv2PROFILE-MSK
+!
+interface Tunnel100
+ description "GRE-to-MSK"
+ ip address 10.77.78.1 255.255.255.254
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source 10.78.254.1
+ tunnel destination 10.77.254.33
+ tunnel protection ipsec profile IPSECPROFILE-MSK
+```
 
-84 bytes from 192.168.21.10 icmp_seq=1 ttl=58 time=2.434 ms
-84 bytes from 192.168.21.10 icmp_seq=2 ttl=58 time=2.521 ms
-84 bytes from 192.168.21.10 icmp_seq=3 ttl=58 time=3.206 ms
-84 bytes from 192.168.21.10 icmp_seq=4 ttl=58 time=2.950 ms
-84 bytes from 192.168.21.10 icmp_seq=5 ttl=58 time=2.756 ms
+Проверка:
+```cfg
+SPB-VPC8> ping 192.168.10.129
 
-MSK-SW5# ping 192.168.21.10
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 192.168.21.10, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 2/2/3 ms
+84 bytes from 192.168.10.129 icmp_seq=1 ttl=59 time=5.381 ms
+84 bytes from 192.168.10.129 icmp_seq=2 ttl=59 time=3.594 ms
+84 bytes from 192.168.10.129 icmp_seq=3 ttl=59 time=3.797 ms
 
-MSK-R15(config)#do sh ip nat translations
-Pro Inside global      Inside local       Outside local      Outside global
-icmp 10.0.254.19:40    172.16.254.5:40    192.168.21.10:40   192.168.21.10:40
-icmp 10.0.254.19:41759 192.168.10.10:41759 192.168.21.10:41759 192.168.21.10:41759
-icmp 10.0.254.19:42015 192.168.10.10:42015 192.168.21.10:42015 192.168.21.10:42015
-icmp 10.0.254.19:42271 192.168.10.10:42271 192.168.21.10:42271 192.168.21.10:42271
-icmp 10.0.254.19:42527 192.168.10.10:42527 192.168.21.10:42527 192.168.21.10:42527
-icmp 10.0.254.19:42783 192.168.10.10:42783 192.168.21.10:42783 192.168.21.10:42783
+
+MSK-VPC1> ping 192.168.20.10
+
+84 bytes from 192.168.20.10 icmp_seq=1 ttl=60 time=4.881 ms
+84 bytes from 192.168.20.10 icmp_seq=2 ttl=60 time=3.592 ms
+84 bytes from 192.168.20.10 icmp_seq=3 ttl=60 time=3.733 ms
+^C
+MSK-VPC1>
+```
+IKE и IPSEC SA на маршрутизаторах:
+```cfg
+MSK-R15(config-ikev2-profile)#do sh crypto ikev2 sa
+ IPv4 Crypto IKEv2  SA
+
+Tunnel-id Local                 Remote                fvrf/ivrf            Status
+1         10.77.254.33/500      10.78.254.1/500       none/none            READY
+      Encr: AES-CBC, keysize: 128, PRF: MD5, Hash: MD596, DH Grp:2, Auth sign: PSK, Auth verify: PSK
+      Life/Active Time: 86400/621 sec
+
+ IPv6 Crypto IKEv2  SA
+
+MSK-R15(config-ikev2-profile)#do sh crypto ipsec sa
+
+interface: Tunnel100
+    Crypto map tag: Tunnel100-head-0, local addr 10.77.254.33
+
+   protected vrf: (none)
+   local  ident (addr/mask/prot/port): (10.77.254.33/255.255.255.255/47/0)
+   remote ident (addr/mask/prot/port): (10.78.254.1/255.255.255.255/47/0)
+   current_peer 10.78.254.1 port 500
+     PERMIT, flags={origin_is_acl,}
+    #pkts encaps: 11, #pkts encrypt: 11, #pkts digest: 11
+    #pkts decaps: 147, #pkts decrypt: 147, #pkts verify: 147
+    #pkts compressed: 0, #pkts decompressed: 0
+    #pkts not compressed: 0, #pkts compr. failed: 0
+    #pkts not decompressed: 0, #pkts decompress failed: 0
+    #send errors 0, #recv errors 0
+
+     local crypto endpt.: 10.77.254.33, remote crypto endpt.: 10.78.254.1
+     plaintext mtu 1458, path mtu 1500, ip mtu 1500, ip mtu idb Ethernet0/2
+     current outbound spi: 0x3F5AF7A2(1062926242)
+     PFS (Y/N): N, DH group: none
+
+     inbound esp sas:
+      spi: 0xFCA5F4BB(4238734523)
+        transform: esp-aes esp-md5-hmac ,
+        in use settings ={Transport, }
+        conn id: 2, flow_id: SW:2, sibling_flags 80000000, crypto map: Tunnel100-head-0
+        sa timing: remaining key lifetime (k/sec): (4263014/2972)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     inbound ah sas:
+
+     inbound pcp sas:
+
+     outbound esp sas:
+      spi: 0x3F5AF7A2(1062926242)
+        transform: esp-aes esp-md5-hmac ,
+        in use settings ={Transport, }
+        conn id: 1, flow_id: SW:1, sibling_flags 80000000, crypto map: Tunnel100-head-0
+        sa timing: remaining key lifetime (k/sec): (4263032/2972)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     outbound ah sas:
+
+     outbound pcp sas:
+MSK-R15(config-ikev2-profile)#
+
+SPB-R18(config-ikev2-profile)#do sh crypto ipsec sa
+
+interface: Tunnel100
+    Crypto map tag: Tunnel100-head-0, local addr 10.78.254.1
+
+   protected vrf: (none)
+   local  ident (addr/mask/prot/port): (10.78.254.1/255.255.255.255/47/0)
+   remote ident (addr/mask/prot/port): (10.77.254.33/255.255.255.255/47/0)
+   current_peer 10.77.254.33 port 500
+     PERMIT, flags={origin_is_acl,}
+    #pkts encaps: 159, #pkts encrypt: 159, #pkts digest: 159
+    #pkts decaps: 11, #pkts decrypt: 11, #pkts verify: 11
+    #pkts compressed: 0, #pkts decompressed: 0
+    #pkts not compressed: 0, #pkts compr. failed: 0
+    #pkts not decompressed: 0, #pkts decompress failed: 0
+    #send errors 0, #recv errors 0
+
+     local crypto endpt.: 10.78.254.1, remote crypto endpt.: 10.77.254.33
+     plaintext mtu 1458, path mtu 1500, ip mtu 1500, ip mtu idb Ethernet0/2
+     current outbound spi: 0xFCA5F4BB(4238734523)
+     PFS (Y/N): N, DH group: none
+
+     inbound esp sas:
+      spi: 0x3F5AF7A2(1062926242)
+        transform: esp-aes esp-md5-hmac ,
+        in use settings ={Transport, }
+        conn id: 3, flow_id: SW:3, sibling_flags 80000000, crypto map: Tunnel100-head-0
+        sa timing: remaining key lifetime (k/sec): (4358379/2942)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     inbound ah sas:
+
+     inbound pcp sas:
+
+     outbound esp sas:
+      spi: 0xFCA5F4BB(4238734523)
+        transform: esp-aes esp-md5-hmac ,
+        in use settings ={Transport, }
+        conn id: 4, flow_id: SW:4, sibling_flags 80000000, crypto map: Tunnel100-head-0
+        sa timing: remaining key lifetime (k/sec): (4358361/2942)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     outbound ah sas:
+
+     outbound pcp sas:
 ```
 
 ![Скриншот 1](images/image1.png)
 
-- ##### Настройте NAT(PAT) на R18. Трансляция должна осуществляться в пул из 5 адресов автономной системы AS2042.
-
-Для реализации задачи пришлось измененить транспортных сетей между AS2042 и AS520, а также между сетями AS1001, AS101, AS301 т.к. ранее они были /31. Изменения отражены в [файле](export_zip/IP-plan.xlsx).
-
-Настройка на R18:
+- ##### Настроите DMVPN поверх IPSec между Москва и Чокурдах, Лабытнанги
+Настройка IPSec для DMVPN  на роутерах MSK-R15, CKD-R28 и LBT-27:
 ```cfg
-interface Ethernet0/0
- ip address 10.0.254.70 255.255.255.254
- ip nat inside
-interface Ethernet0/1
- ip address 10.0.254.72 255.255.255.254
- ip nat inside
+crypto ikev2 proposal IKEv2PROPOSAL-DMVPN
+ encryption aes-cbc-128
+ integrity md5
+ group 2
 
-interface Ethernet0/2
- ip nat outside
+crypto ikev2 policy IKEv2POLICY-DMVPN
+ proposal IKEv2PROPOSAL-DMVPN
 
-interface Ethernet0/3
- ip nat outside
-
-route-map TRD-R26 permit 10
- match ip address 78
- match interface Ethernet0/3
+crypto ikev2 keyring IKEv2-DMVPN
+ peer dmvpn-node
+  address 0.0.0.0 0.0.0.0
+  pre-shared-key OTUS-DMVPN
 !
-route-map TRD-R24 permit 10
- match ip address 78
- match interface Ethernet0/2
+crypto ikev2 profile IKEv2PROFILE-DMVPN
+ keyring local IKEv2-DMVPN
+ authentication local pre-share
+ authentication remote pre-share
+ match address local 0.0.0.0
+ match identity remote address 0.0.0.0 0.0.0.0
+!
+ 
+crypto ipsec transform-set IPSECTS-DMVPN esp-aes esp-md5-hmac
+  mode transport
 
-ip nat pool SPB-TRD24 10.78.254.11 10.78.254.15 prefix-length 27
-ip nat pool SPB-TRD26 10.78.254.41 10.78.254.45 prefix-length 27
-ip nat inside source route-map TRD-R24 pool SPB-TRD24
-ip nat inside source route-map TRD-R26 pool SPB-TRD26
+crypto ipsec profile IPSECPROFILE-DMVPN
+  set transform-set IPSECTS-DMVPN
+  set ikev2-profile IKEv2PROFILE-DMVPN
+
+interface Tunnel150
+ tunnel protection ipsec profile IPSECPROFILE-DMVPN
 ```
-
 Проверка:
 ```cfg
+MSK-R15(config-ikev2-profile)#do sh ip nhrp
+10.77.0.2/32 via 10.77.0.2
+   Tunnel150 created 00:02:14, expire 00:08:27
+   Type: dynamic, Flags: registered nhop
+   NBMA address: 10.0.254.89
+10.77.0.3/32 via 10.77.0.3
+   Tunnel150 created 00:02:07, expire 00:08:05
+   Type: dynamic, Flags: registered nhop
+   NBMA address: 10.0.254.141
+MSK-R15(config-ikev2-profile)#do sh dmvpn
+Legend: Attrb --> S - Static, D - Dynamic, I - Incomplete
+        N - NATed, L - Local, X - No Socket
+        T1 - Route Installed, T2 - Nexthop-override
+        C - CTS Capable, I2 - Temporary
+        # Ent --> Number of NHRP entries with same NBMA peer
+        NHS Status: E --> Expecting Replies, R --> Responding, W --> Waiting
+        UpDn Time --> Up or Down Time for a Tunnel
+==========================================================================
 
-SPB-VPC8> ping 192.168.30.10
+Interface: Tunnel150, IPv4 NHRP Details
+Type:Hub, NHRP Peers:2,
 
-84 bytes from 192.168.30.10 icmp_seq=1 ttl=59 time=2.093 ms
-84 bytes from 192.168.30.10 icmp_seq=2 ttl=59 time=2.245 ms
-84 bytes from 192.168.30.10 icmp_seq=3 ttl=59 time=2.530 ms
-84 bytes from 192.168.30.10 icmp_seq=4 ttl=59 time=2.851 ms
-84 bytes from 192.168.30.10 icmp_seq=5 ttl=59 time=2.413 ms
+ # Ent  Peer NBMA Addr Peer Tunnel Add State  UpDn Tm Attrb
+ ----- --------------- --------------- ----- -------- -----
+     1 10.0.254.89           10.77.0.2    UP 00:02:18     D
+     1 10.0.254.141          10.77.0.3    UP 00:02:11     D
 
-SPB-SW9#ping 192.168.30.10
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 192.168.30.10, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms
+MSK-R15(config-ikev2-profile)#do sh  crypto ikev2 sa
+ IPv4 Crypto IKEv2  SA
 
-SPB-R18(config)#do sh ip nat trans
-Pro Inside global      Inside local       Outside local      Outside global
-icmp 10.78.254.43:5    172.16.254.21:5    192.168.30.10:5    192.168.30.10:5
-icmp 10.78.254.43:6    172.16.254.21:6    192.168.30.10:6    192.168.30.10:6
-icmp 10.78.254.43:7    172.16.254.21:7    192.168.30.10:7    192.168.30.10:7
-icmp 10.78.254.42:17983 192.168.20.10:17983 192.168.30.10:17983 192.168.30.10:17983
-icmp 10.78.254.42:18239 192.168.20.10:18239 192.168.30.10:18239 192.168.30.10:18239
-icmp 10.78.254.42:18495 192.168.20.10:18495 192.168.30.10:18495 192.168.30.10:18495
-icmp 10.78.254.42:18751 192.168.20.10:18751 192.168.30.10:18751 192.168.30.10:18751
-icmp 10.78.254.42:19007 192.168.20.10:19007 192.168.30.10:19007 192.168.30.10:19007
-icmp 10.78.254.42:19263 192.168.20.10:19263 192.168.30.10:19263 192.168.30.10:19263
-icmp 10.78.254.42:19519 192.168.20.10:19519 192.168.30.10:19519 192.168.30.10:19519
-icmp 10.78.254.42:19775 192.168.20.10:19775 192.168.30.10:19775 192.168.30.10:19775
-icmp 10.78.254.42:20031 192.168.20.10:20031 192.168.30.10:20031 192.168.30.10:20031
-icmp 10.78.254.42:20287 192.168.20.10:20287 192.168.30.10:20287 192.168.30.10:20287
-icmp 10.78.254.42:20543 192.168.20.10:20543 192.168.30.10:20543 192.168.30.10:20543
-icmp 10.78.254.42:20799 192.168.20.10:20799 192.168.30.10:20799 192.168.30.10:20799
-icmp 10.78.254.42:21055 192.168.20.10:21055 192.168.30.10:21055 192.168.30.10:21055
+Tunnel-id Local                 Remote                fvrf/ivrf            Status
+3         10.77.254.33/500      10.0.254.141/500      none/none            READY
+      Encr: AES-CBC, keysize: 128, PRF: MD5, Hash: MD596, DH Grp:2, Auth sign: PSK, Auth verify: PSK
+      Life/Active Time: 86400/144 sec
+
+Tunnel-id Local                 Remote                fvrf/ivrf            Status
+1         10.77.254.33/500      10.78.254.1/500       none/none            READY
+      Encr: AES-CBC, keysize: 128, PRF: MD5, Hash: MD596, DH Grp:2, Auth sign: PSK, Auth verify: PSK
+      Life/Active Time: 86400/2582 sec
+
+Tunnel-id Local                 Remote                fvrf/ivrf            Status
+2         10.77.254.33/500      10.0.254.89/500       none/none            READY
+      Encr: AES-CBC, keysize: 128, PRF: MD5, Hash: MD596, DH Grp:2, Auth sign: PSK, Auth verify: PSK
+      Life/Active Time: 86400/151 sec
+
+ IPv6 Crypto IKEv2  SA
+
+MSK-R15(config-ikev2-profile)#do sh  crypto ipsec sa
+interface: Tunnel150
+    Crypto map tag: Tunnel150-head-0, local addr 10.77.254.33
+
+   protected vrf: (none)
+   local  ident (addr/mask/prot/port): (10.77.254.33/255.255.255.255/47/0)
+   remote ident (addr/mask/prot/port): (10.0.254.141/255.255.255.255/47/0)
+   current_peer 10.0.254.141 port 500
+     PERMIT, flags={origin_is_acl,}
+    #pkts encaps: 62, #pkts encrypt: 62, #pkts digest: 62
+    #pkts decaps: 64, #pkts decrypt: 64, #pkts verify: 64
+    #pkts compressed: 0, #pkts decompressed: 0
+    #pkts not compressed: 0, #pkts compr. failed: 0
+    #pkts not decompressed: 0, #pkts decompress failed: 0
+    #send errors 0, #recv errors 0
+
+     local crypto endpt.: 10.77.254.33, remote crypto endpt.: 10.0.254.141
+     plaintext mtu 1458, path mtu 1500, ip mtu 1500, ip mtu idb Ethernet0/2
+     current outbound spi: 0x5F4C40B3(1598832819)
+     PFS (Y/N): N, DH group: none
+
+     inbound esp sas:
+      spi: 0x143C7AC2(339507906)
+        transform: esp-aes esp-md5-hmac ,
+        in use settings ={Transport, }
+        conn id: 5, flow_id: SW:5, sibling_flags 80000000, crypto map: Tunnel150-head-0
+        sa timing: remaining key lifetime (k/sec): (4238587/3445)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     inbound ah sas:
+
+     inbound pcp sas:
+
+     outbound esp sas:
+      spi: 0x5F4C40B3(1598832819)
+        transform: esp-aes esp-md5-hmac ,
+        in use settings ={Transport, }
+        conn id: 6, flow_id: SW:6, sibling_flags 80000000, crypto map: Tunnel150-head-0
+        sa timing: remaining key lifetime (k/sec): (4238587/3445)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     outbound ah sas:
+
+     outbound pcp sas:
+
+   protected vrf: (none)
+   local  ident (addr/mask/prot/port): (10.77.254.33/255.255.255.255/47/0)
+   remote ident (addr/mask/prot/port): (10.0.254.89/255.255.255.255/47/0)
+   current_peer 10.0.254.89 port 500
+     PERMIT, flags={origin_is_acl,}
+    #pkts encaps: 51, #pkts encrypt: 51, #pkts digest: 51
+    #pkts decaps: 48, #pkts decrypt: 48, #pkts verify: 48
+    #pkts compressed: 0, #pkts decompressed: 0
+    #pkts not compressed: 0, #pkts compr. failed: 0
+    #pkts not decompressed: 0, #pkts decompress failed: 0
+    #send errors 0, #recv errors 0
+
+     local crypto endpt.: 10.77.254.33, remote crypto endpt.: 10.0.254.89
+     plaintext mtu 1458, path mtu 1500, ip mtu 1500, ip mtu idb Ethernet0/2
+     current outbound spi: 0x72AE893A(1924041018)
+     PFS (Y/N): N, DH group: none
+
+     inbound esp sas:
+      spi: 0xE0C1E232(3770802738)
+        transform: esp-aes esp-md5-hmac ,
+        in use settings ={Transport, }
+        conn id: 3, flow_id: SW:3, sibling_flags 80000000, crypto map: Tunnel150-head-0
+        sa timing: remaining key lifetime (k/sec): (4362525/3438)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     inbound ah sas:
+
+     inbound pcp sas:
+
+     outbound esp sas:
+      spi: 0x72AE893A(1924041018)
+        transform: esp-aes esp-md5-hmac ,
+        in use settings ={Transport, }
+        conn id: 4, flow_id: SW:4, sibling_flags 80000000, crypto map: Tunnel150-head-0
+        sa timing: remaining key lifetime (k/sec): (4362525/3438)
+        IV size: 16 bytes
+        replay detection support: Y
+        Status: ACTIVE(ACTIVE)
+
+     outbound ah sas:
+
+     outbound pcp sas:
+
+
+MSK-R15(config-ikev2-profile)#
+MSK-R15(config-ikev2-profile)#do sh ip ro eigrp
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+
+Gateway of last resort is 10.77.254.62 to network 0.0.0.0
+
+      172.16.0.0/16 is variably subnetted, 10 subnets, 3 masks
+D        172.16.254.32/29 [90/26905600] via 10.77.0.3, 00:03:09, Tunnel150
+D        172.16.255.27/32 [90/27008000] via 10.77.0.2, 00:03:09, Tunnel150
+D        172.16.255.28/32 [90/27008000] via 10.77.0.3, 00:03:09, Tunnel150
+D     192.168.30.0/24 [90/26905600] via 10.77.0.3, 00:03:09, Tunnel150
+D     192.168.31.0/24 [90/26905600] via 10.77.0.3, 00:03:09, Tunnel150
 ```
 
 ![Скриншот 2](images/image2.png)
 
-
-- ##### Настройте статический NAT для R20.
-Настройка на R15:
+- ##### Для IPSec использовать CA и сертификаты
+Инициализация CA  на R14:
 ```cfg
-ip nat inside source static 10.0.254.11 10.77.254.40
+ip domain-name otus.ru 
+ip http server
+crypto key generate rsa general-keys label CA exportable modulus 2048
+crypto pki server CA 
+  no shut
+```
+Запросы на  сертификаты:
+```cfg
+crypto key generate rsa label VPN modulus 2048
+crypto pki trustpoint VPN
+  enrollment url http://10.77.254.1
+  subject-name CN=CRD-R28,OU=VPN,O=Otus,C=RU 
+  rsakeypair VPN
+  revocation-check none
 
+crypto pki authenticate VPN
+crypto pki enroll VPN
+
+crypto key generate rsa label VPN modulus 2048
+crypto pki trustpoint VPN
+  enrollment url http://10.77.254.1
+  subject-name CN=LBT-R27,OU=VPN,O=Otus,C=RU 
+  rsakeypair VPN
+  revocation-check none
+
+crypto pki authenticate VPN
+crypto pki enroll VPN
+
+crypto key generate rsa label VPN modulus 2048
+crypto pki trustpoint VPN
+  enrollment url http://10.77.254.1
+  subject-name CN=MSK-R15,OU=VPN,O=Otus,C=RU 
+  rsakeypair VPN
+  revocation-check none
+
+crypto pki authenticate VPN
+crypto pki enroll VPN
+
+crypto key generate rsa label VPN modulus 2048
+crypto pki trustpoint VPN
+  enrollment url http://10.77.254.1
+  subject-name CN=SPB-R18,OU=VPN,O=Otus,C=RU 
+  rsakeypair VPN
+  revocation-check none
+crypto pki authenticate VPN
+crypto pki enroll VPN
+```
+Просмотр запросов:
+```cfg
+MSK-R14(cs-server)#do sho crypto pki server CA requests
+Enrollment Request Database:
+
+Subordinate CA certificate requests:
+ReqID  State      Fingerprint                      SubjectName
+--------------------------------------------------------------
+
+RA certificate requests:
+ReqID  State      Fingerprint                      SubjectName
+--------------------------------------------------------------
+
+Router certificates requests:
+ReqID  State      Fingerprint                      SubjectName
+--------------------------------------------------------------
+3      pending    002436B085AFFFE332CA2FEA2FC50F66 hostname=MSK-R15.otus.local,cn=MSK-R15,ou=VPN,o=Otus,c=RU
+2      pending    78104E2CFDD7D5233BDC2D2F1D19F95B hostname=LBT-R27.otus.local,cn=LBT-R27,ou=VPN,o=Otus,c=RU
+1      pending    2A600727DA6AE564844A4C5B06CCD219 hostname=CKD-R28.otus.local,cn=CRD-R28,ou=VPN,o=Otus,c=RU
 
 ```
-Проверка доступности:
+Выпуск сертификатов:
 ```cfg
-SPB-VPC8> ping 10.77.254.40
+MSK-R14(cs-server)#do crypto pki server CA grant 1
+MSK-R14(cs-server)#do crypto pki server CA grant 2
+MSK-R14(cs-server)#do crypto pki server CA grant 3
+```
+Просмотр  сертификатов:
+```cfg
+MSK-R15(config)#do  sh crypto pki certificates
+Certificate
+  Status: Available
+  Certificate Serial Number (hex): 04
+  Certificate Usage: General Purpose
+  Issuer:
+    cn=CA
+  Subject:
+    Name: MSK-R15.otus.local
+    hostname=MSK-R15.otus.local
+    cn=MSK-R15
+    ou=VPN
+    o=Otus
+    c=RU
+  Validity Date:
+    start date: 23:11:45 MSK Dec 10 2024
+    end   date: 23:11:45 MSK Dec 10 2025
+  Associated Trustpoints: VPN
 
-84 bytes from 10.77.254.40 icmp_seq=1 ttl=250 time=2.370 ms
-84 bytes from 10.77.254.40 icmp_seq=2 ttl=250 time=2.079 ms
-84 bytes from 10.77.254.40 icmp_seq=3 ttl=250 time=2.771 ms
-84 bytes from 10.77.254.40 icmp_seq=4 ttl=250 time=2.006 ms
+CA Certificate
+  Status: Available
+  Certificate Serial Number (hex): 01
+  Certificate Usage: Signature
+  Issuer:
+    cn=CA
+  Subject:
+    cn=CA
+  Validity Date:
+    start date: 23:05:26 MSK Dec 10 2024
+    end   date: 23:05:26 MSK Dec 10 2027
+  Associated Trustpoints: VPN
+  Storage: nvram:CA#1CA.cer
+```
+Настройка  на  MSK-R15 и SPB-R18:
+```cfg
+crypto ikev2 profile IKEv2PROFILE-SPB
+ match identity remote address 10.78.254.1 255.255.255.255
+ authentication remote rsa-sig
+ authentication local rsa-sig
+ pki trustpoint VPN
 
-CKD-R28#tracerout 10.77.254.40
+crypto ikev2 profile IKEv2PROFILE-MSK
+ match identity remote address 10.77.254.33 255.255.255.255
+ authentication remote rsa-sig
+ authentication local rsa-sig
+ pki trustpoint VPN
+```
+Поверка
+```cfg
+SPB-R18(config-if)#do  sh crypto ikev2 ses
+ IPv4 Crypto IKEv2 Session
+
+Session-id:3, Status:UP-ACTIVE, IKE count:1, CHILD count:1
+
+Tunnel-id Local                 Remote                fvrf/ivrf            Status
+1         10.78.254.1/500       10.77.254.33/500      none/none            READY
+      Encr: AES-CBC, keysize: 128, PRF: MD5, Hash: MD596, DH Grp:2, Auth sign: RSA, Auth verify: RSA
+      Life/Active Time: 86400/99 sec
+Child sa: local selector  10.78.254.1/0 - 10.78.254.1/65535
+          remote selector 10.77.254.33/0 - 10.77.254.33/65535
+          ESP spi in/out: 0x72F9A6E9/0xA05AE01F
+
+ IPv6 Crypto IKEv2 Session
+```
+Как можно видеть используются сертификаты - "Auth sign: RSA, Auth verify: RSA"
+
+Для DMVPN настройка аналогичная, поэтому проверка и вывод:
+```cfg
+MSK-R15(config-ikev2-profile)#
+MSK-R15(config-ikev2-profile)#do  ping 172.16.255.27
 Type escape sequence to abort.
-Tracing the route to 10.77.254.40
-VRF info: (vrf in name/id, vrf out name/id)
-  1 10.0.254.140 0 msec 1 msec 0 msec
-  2 10.0.254.52 1 msec 0 msec 1 msec
-  3 10.0.254.43 0 msec 0 msec 1 msec
-  4 10.77.254.1 2 msec 1 msec 1 msec
-  5 10.0.254.15 1 msec *  11 msec
-CKD-R28#ping 10.77.254.40
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 10.77.254.40, timeout is 2 seconds:
+Sending 5, 100-byte ICMP Echos to 172.16.255.27, timeout is 2 seconds:
 !!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms
-```
-
-
-- ##### Настройте NAT так, чтобы R19 был доступен с любого узла для удаленного управления.
-Настройка на R14:
-```cfg
-ip nat inside source static 10.0.254.5 10.77.254.14
-
-interface Ethernet0/3
- description "to R19.e0/0"
- ip nat inside
-```
-Проверка:
-```cfg
-MSK-R19#ping 192.168.30.10
+Success rate is 100 percent (5/5), round-trip min/avg/max = 5/5/6 ms
+MSK-R15(config-ikev2-profile)#do  ping 172.16.255.28
 Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 192.168.30.10, timeout is 2 seconds:
+Sending 5, 100-byte ICMP Echos to 172.16.255.28, timeout is 2 seconds:
 !!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/3 ms
+Success rate is 100 percent (5/5), round-trip min/avg/max = 5/5/6 ms
+MSK-R15(config-ikev2-profile)#do  sh crypto ikev2 ses
+ IPv4 Crypto IKEv2 Session
 
-MSK-R14(config-router)#do sh ip nat tra
-Pro Inside global      Inside local       Outside local      Outside global
-udp 10.77.254.14:49212 10.0.254.5:49212   192.168.30.10:33492 192.168.30.10:33492
-udp 10.77.254.14:49213 10.0.254.5:49213   192.168.30.10:33493 192.168.30.10:33493
-udp 10.77.254.14:49214 10.0.254.5:49214   192.168.30.10:33494 192.168.30.10:33494
-udp 10.77.254.14:49215 10.0.254.5:49215   192.168.30.10:33495 192.168.30.10:33495
-udp 10.77.254.14:49216 10.0.254.5:49216   192.168.30.10:33496 192.168.30.10:33496
-udp 10.77.254.14:49217 10.0.254.5:49217   192.168.30.10:33497 192.168.30.10:33497
-udp 10.77.254.14:49218 10.0.254.5:49218   192.168.30.10:33498 192.168.30.10:33498
-udp 10.77.254.14:49219 10.0.254.5:49219   192.168.30.10:33499 192.168.30.10:33499
-udp 10.77.254.14:49220 10.0.254.5:49220   192.168.30.10:33500 192.168.30.10:33500
-udp 10.77.254.14:49221 10.0.254.5:49221   192.168.30.10:33501 192.168.30.10:33501
-udp 10.77.254.14:49222 10.0.254.5:49222   192.168.30.10:33502 192.168.30.10:33502
+Session-id:2, Status:UP-ACTIVE, IKE count:1, CHILD count:1
+
+Tunnel-id Local                 Remote                fvrf/ivrf            Status
+2         10.77.254.33/500      10.0.254.89/500       none/none            READY
+      Encr: AES-CBC, keysize: 128, PRF: MD5, Hash: MD596, DH Grp:2, Auth sign: PSK, Auth verify: PSK
+      Life/Active Time: 86400/2243 sec
+Child sa: local selector  10.77.254.33/0 - 10.77.254.33/65535
+          remote selector 10.0.254.89/0 - 10.0.254.89/65535
+          ESP spi in/out: 0xE0C1E232/0x72AE893A
+
+Session-id:3, Status:UP-ACTIVE, IKE count:1, CHILD count:1
+
+Tunnel-id Local                 Remote                fvrf/ivrf            Status
+3         10.77.254.33/500      10.0.254.141/500      none/none            READY
+      Encr: AES-CBC, keysize: 128, PRF: MD5, Hash: MD596, DH Grp:2, Auth sign: PSK, Auth verify: PSK
+      Life/Active Time: 86400/2236 sec
+Child sa: local selector  10.77.254.33/0 - 10.77.254.33/65535
+          remote selector 10.0.254.141/0 - 10.0.254.141/65535
+          ESP spi in/out: 0x143C7AC2/0x5F4C40B3
+
+Session-id:4, Status:UP-ACTIVE, IKE count:1, CHILD count:1
+
+Tunnel-id Local                 Remote                fvrf/ivrf            Status
+1         10.77.254.33/500      10.78.254.1/500       none/none            READY
+      Encr: AES-CBC, keysize: 128, PRF: MD5, Hash: MD596, DH Grp:2, Auth sign: RSA, Auth verify: RSA
+      Life/Active Time: 86400/588 sec
+Child sa: local selector  10.77.254.33/0 - 10.77.254.33/65535
+          remote selector 10.78.254.1/0 - 10.78.254.1/65535
+          ESP spi in/out: 0xA05AE01F/0x72F9A6E9
+
+ IPv6 Crypto IKEv2 Session
+
 ```
-![Скриншот 3](images/image3.png)
-
-
-- ##### Настроите для IPv4 DHCP сервер в офисе Москва на маршрутизаторах R12 и R13. VPC1 и VPC7 должны получать сетевые настройки по DHCP.
-Настройка на R12:
-```cfg
-ip dhcp excluded-address 192.168.10.1
-ip dhcp excluded-address 192.168.10.2
-ip dhcp excluded-address 192.168.10.3
-ip dhcp excluded-address 192.168.11.3
-ip dhcp excluded-address 192.168.11.2
-ip dhcp excluded-address 192.168.11.1
-ip dhcp excluded-address 192.168.11.129 192.168.11.254
-ip dhcp excluded-address 192.168.10.129 192.168.10.254
-!
-ip dhcp pool vlan10
- network 192.168.10.0 255.255.255.0
- default-router 192.168.10.1
- domain-name otus.lab.com
-!
-ip dhcp pool vlan11
- network 192.168.11.0 255.255.255.0
- default-router 192.168.11.1
- domain-name otus.lab.com
-```
-
-Настройка на R13:
-```cfg
-ip dhcp excluded-address 192.168.10.1
-ip dhcp excluded-address 192.168.10.2
-ip dhcp excluded-address 192.168.10.3
-ip dhcp excluded-address 192.168.11.3
-ip dhcp excluded-address 192.168.11.2
-ip dhcp excluded-address 192.168.11.1
-ip dhcp excluded-address 192.168.10.4 192.168.10.128
-ip dhcp excluded-address 192.168.11.4 192.168.11.128
-!
-ip dhcp pool vlan10
- network 192.168.10.0 255.255.255.0
- default-router 192.168.10.1
- domain-name otus.lab.com
-!
-ip dhcp pool vlan11
- network 192.168.11.0 255.255.255.0
- default-router 192.168.11.1
- domain-name otus.lab.com
-```
-
-Проверка:
-```cfg
-MSK-VPC1> ip dhcp
-DDORA IP 192.168.10.129/24 GW 192.168.10.1
-
-MSK-VPC7> ip dhcp
-DDORA IP 192.168.11.4/24 GW 192.168.11.1
-```
-
-- ##### Настройте NTP сервер на R12 и R13. Все устройства в офисе Москва должны синхронизировать время с R12 и R13.
-Настройка на R12 и R13:
-```cfg
-ntp master 1
-ntp update-calendar
-
-interface Ethernet0/0.10
- ntp broadcast
-
-interface Ethernet0/0.11
- ntp broadcast
-
-interface Ethernet0/1
- no ip address
-
-interface Ethernet0/1.55
- ntp broadcast
-
-interface Ethernet0/2
- ntp broadcast
- 
-interface Ethernet0/3
- ntp broadcast
- 
-```
-Настройка клиентов:
-```cfg
-ntp server 172.16.255.12
-ntp server 172.16.255.13
-```
-
-Проверка:
-```cfg
-MSK-R19(config)#do sh ntp stat
-Clock is synchronized, stratum 2, reference is 172.16.255.12
-nominal freq is 250.0000 Hz, actual freq is 250.0000 Hz, precision is 2**10
-ntp uptime is 3200 (1/100 of seconds), resolution is 4000
-reference time is EAF2F5C9.1E76C908 (16:59:37.119 MSK Thu Nov 28 2024)
-clock offset is 0.5000 msec, root delay is 1.00 msec
-root dispersion is 193.34 msec, peer dispersion is 189.44 msec
-loopfilter state is 'CTRL' (Normal Controlled Loop), drift is 0.000000000 s/s
-system poll interval is 64, last update was 21 sec ago.
-
-
-MSK-R14(config)#do sh ntp status
-Clock is synchronized, stratum 2, reference is 172.16.255.12
-nominal freq is 250.0000 Hz, actual freq is 250.0000 Hz, precision is 2**10
-ntp uptime is 13600 (1/100 of seconds), resolution is 4000
-reference time is EAF2F5F4.3B645AC0 (17:00:20.232 MSK Thu Nov 28 2024)
-clock offset is 0.0000 msec, root delay is 0.00 msec
-root dispersion is 69.08 msec, peer dispersion is 64.87 msec
-loopfilter state is 'CTRL' (Normal Controlled Loop), drift is 0.000000000 s/s
-system poll interval is 128, last update was 69 sec ago.
-```
-
-
 
 ### Конфиги устройств:
-- [R14](R14)
 - [R15](R15)
-- [R12](R12)
-- [R13](R13)
 - [R18](R18)
+- [R27](R27)
+- [R28](R28)

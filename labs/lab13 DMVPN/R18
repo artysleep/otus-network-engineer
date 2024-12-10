@@ -1,9 +1,8 @@
-SPB-R18#sh run
-Building configuration...
-
-Current configuration : 4327 bytes
+Current configuration : 4047 bytes
 !
-version 15.4
+! Last configuration change at 21:23:19 MSK Tue Dec 10 2024 by cisco
+!
+version 15.7
 service timestamps debug datetime msec
 service timestamps log datetime msec
 service password-encryption
@@ -26,11 +25,21 @@ aaa authentication login default local
 !
 !
 aaa session-id common
+!
+!
+!
 clock timezone MSK 3 0
 mmi polling-interval 60
 no mmi auto-configure
 no mmi pvc
 mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
 !
 !
 !
@@ -60,12 +69,12 @@ multilink bundle-name authenticated
 !
 !
 !
+!
 username cisco privilege 15 password 7 070C285F4D06
 !
 redundancy
 !
 !
-ip ssh version 2
 !
 !
 !
@@ -84,18 +93,12 @@ interface Loopback0
  ipv6 address FC00::18/128
 !
 interface Tunnel100
+ description "GRE-to-MSK"
  ip address 10.77.78.1 255.255.255.254
  ip mtu 1400
  ip tcp adjust-mss 1360
- tunnel source 10.78.254.33
- tunnel destination 10.77.254.33
-!
-interface Tunnel101
- ip address 10.77.78.3 255.255.255.254
- ip mtu 1400
- ip tcp adjust-mss 1360
  tunnel source 10.78.254.1
- tunnel destination 10.77.254.1
+ tunnel destination 10.77.254.33
 !
 interface Ethernet0/0
  description 'to SPB-R16.e0/1'
@@ -103,6 +106,7 @@ interface Ethernet0/0
  ip address 10.0.254.70 255.255.255.254
  ip nat inside
  ip virtual-reassembly in
+ duplex auto
  ipv6 address FC02::70/127
 !
 interface Ethernet0/1
@@ -110,6 +114,7 @@ interface Ethernet0/1
  ip address 10.0.254.72 255.255.255.254
  ip nat inside
  ip virtual-reassembly in
+ duplex auto
  ipv6 address FC02::72/127
 !
 interface Ethernet0/2
@@ -117,6 +122,7 @@ interface Ethernet0/2
  ip address 10.78.254.1 255.255.255.224
  ip nat outside
  ip virtual-reassembly in
+ duplex auto
  ipv6 address FC02::67/127
 !
 interface Ethernet0/3
@@ -124,6 +130,7 @@ interface Ethernet0/3
  ip address 10.78.254.33 255.255.255.224
  ip nat outside
  ip virtual-reassembly in
+ duplex auto
  ipv6 address FC02::69/127
 !
 !
@@ -149,11 +156,9 @@ router eigrp SPB
 router bgp 2042
  bgp log-neighbor-changes
  bgp bestpath as-path multipath-relax
- network 10.0.254.66 mask 255.255.255.254
- network 10.0.254.68 mask 255.255.255.254
- network 10.78.254.0 mask 255.255.255.192
+ network 10.78.254.0 mask 255.255.255.224
+ network 10.78.254.32 mask 255.255.255.224
  network 172.16.255.18 mask 255.255.255.255
- redistribute eigrp 78 route-map REDISTRIBUTE-EIGRP-TO-BGP
  neighbor 10.0.254.66 remote-as 520
  neighbor 10.0.254.66 prefix-list NO-TRANSIT out
  neighbor 10.0.254.68 remote-as 520
@@ -161,7 +166,6 @@ router bgp 2042
  neighbor 10.78.254.30 remote-as 520
  neighbor 10.78.254.30 prefix-list NO-TRANSIT out
  neighbor 10.78.254.62 remote-as 520
- maximum-paths 2
 !
 ip forward-protocol nd
 !
@@ -173,14 +177,12 @@ ip nat pool SPB-TRD26 10.78.254.41 10.78.254.45 prefix-length 27
 ip nat inside source route-map TRD-R24 pool SPB-TRD24
 ip nat inside source route-map TRD-R26 pool SPB-TRD26
 ip route 0.0.0.0 0.0.0.0 Null0
-ip route 192.168.10.0 255.255.254.0 Tunnel100 2
-ip route 192.168.10.0 255.255.254.0 Tunnel101 3
+ip route 172.16.254.0 255.255.255.240 Tunnel100 10.77.78.0
+ip route 172.16.254.32 255.255.255.248 Tunnel100 10.77.78.0
+ip route 192.168.10.0 255.255.254.0 Tunnel100 10.77.78.0
+ip route 192.168.30.0 255.255.254.0 Tunnel100 10.77.78.0
+ip ssh version 2
 !
-!
-ip prefix-list NO-INT-NETS seq 10 deny 192.168.20.0/23 le 32
-ip prefix-list NO-INT-NETS seq 15 deny 192.168.10.0/23 le 32
-ip prefix-list NO-INT-NETS seq 20 deny 172.16.254.16/28 le 32
-ip prefix-list NO-INT-NETS seq 30 permit 0.0.0.0/0 le 32
 !
 ip prefix-list NO-TRANSIT seq 10 permit 10.0.254.64/28
 ip prefix-list NO-TRANSIT seq 20 permit 192.168.20.0/23
@@ -191,9 +193,7 @@ ip prefix-list NO-TRANSIT seq 43 permit 172.16.255.17/32
 ip prefix-list NO-TRANSIT seq 44 permit 172.16.255.32/32
 ip prefix-list NO-TRANSIT seq 50 deny 0.0.0.0/0 le 32
 ipv6 route ::/0 Null0
-!
-route-map REDISTRIBUTE-EIGRP-TO-BGP permit 10
- match ip address prefix-list NO-INT-NETS
+ipv6 ioam timestamp
 !
 route-map TRD-R26 permit 10
  match ip address 78
