@@ -1,176 +1,42 @@
 # Протоколы сети интернет
 
 ### Цели:
-- ##### Настроить DHCP в офисе Москва
-- ##### Настроить синхронизацию времени в офисе Москва
-- ##### Настроить NAT в офисе Москва, C.-Перетбруг и Чокурдах
+- ##### Настроить GRE поверх IPSec между офисами Москва и С.-Петербург
+- ##### Настроить DMVPN поверх IPSec между офисами Москва и Чокурдах, Лабытнанги
 
 ### Описание/Пошаговая инструкция выполнения домашнего задания:
-- ##### Настройте NAT(PAT) на R14 и R15. Трансляция должна осуществляться в адрес автономной системы AS1001.
-- ##### Настройте NAT(PAT) на R18. Трансляция должна осуществляться в пул из 5 адресов автономной системы AS2042.
-- ##### Настройте статический NAT для R20.
-- ##### Настройте NAT так, чтобы R19 был доступен с любого узла для удаленного управления.
-- ##### * Настройте статический NAT(PAT) для офиса Чокурдах.
-- ##### Настроите для IPv4 DHCP сервер в офисе Москва на маршрутизаторах R12 и R13. VPC1 и VPC7 должны получать сетевые настройки по DHCP.
-- ##### Настройте NTP сервер на R12 и R13. Все устройства в офисе Москва должны синхронизировать время с R12 и R13.
+- ##### Настройте GRE поверх IPSec между офисами Москва и С.-Петербург.
+- ##### Настройте DMVPN поверх IPSec между Москва и Чокурдах, Лабытнанги.
 
 Экспорт лабораторной работы из EVE-NG:
 
-- [Protocols.zip](export_zip/lab11_BGP_Filter.zip)
+- [IPSEC.zip](export_zip/IPSEC.zip)
 
 - ##### Настройте NAT(PAT) на R14 и R15. Трансляция должна осуществляться в адрес автономной системы AS1001.
 Настройка на R14 и R15:
 ```cfg
-access-list 78 permit 172.16.254.0 0.0.0.15
-access-list 78 permit 192.168.10.0 0.0.1.255
-
-ip nat inside source list 78 interface Ethernet0/2 overload
-
-interface Ethernet0/0
-  ip nat inside
-
-interface Ethernet0/1
-  ip nat inside
-
-interface Ethernet0/2
- ip nat outside
-
-!
-interface Ethernet1/0
- ip nat inside
 ```
 
 
 ```cfg
-MSK-VPC1> ping 192.168.21.10
-
-84 bytes from 192.168.21.10 icmp_seq=1 ttl=58 time=2.434 ms
-84 bytes from 192.168.21.10 icmp_seq=2 ttl=58 time=2.521 ms
-84 bytes from 192.168.21.10 icmp_seq=3 ttl=58 time=3.206 ms
-84 bytes from 192.168.21.10 icmp_seq=4 ttl=58 time=2.950 ms
-84 bytes from 192.168.21.10 icmp_seq=5 ttl=58 time=2.756 ms
-
-MSK-SW5# ping 192.168.21.10
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 192.168.21.10, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 2/2/3 ms
-
-MSK-R15(config)#do sh ip nat translations
-Pro Inside global      Inside local       Outside local      Outside global
-icmp 10.0.254.19:40    172.16.254.5:40    192.168.21.10:40   192.168.21.10:40
-icmp 10.0.254.19:41759 192.168.10.10:41759 192.168.21.10:41759 192.168.21.10:41759
-icmp 10.0.254.19:42015 192.168.10.10:42015 192.168.21.10:42015 192.168.21.10:42015
-icmp 10.0.254.19:42271 192.168.10.10:42271 192.168.21.10:42271 192.168.21.10:42271
-icmp 10.0.254.19:42527 192.168.10.10:42527 192.168.21.10:42527 192.168.21.10:42527
-icmp 10.0.254.19:42783 192.168.10.10:42783 192.168.21.10:42783 192.168.21.10:42783
 ```
 
 ![Скриншот 1](images/image1.png)
 
 - ##### Настройте NAT(PAT) на R18. Трансляция должна осуществляться в пул из 5 адресов автономной системы AS2042.
 
-Для реализации задачи пришлось измененить транспортных сетей между AS2042 и AS520, а также между сетями AS1001, AS101, AS301 т.к. ранее они были /31. Изменения отражены в [файле](export_zip/IP-plan.xlsx).
 
-Настройка на R18:
 ```cfg
-interface Ethernet0/0
- ip address 10.0.254.70 255.255.255.254
- ip nat inside
-interface Ethernet0/1
- ip address 10.0.254.72 255.255.255.254
- ip nat inside
-
-interface Ethernet0/2
- ip nat outside
-
-interface Ethernet0/3
- ip nat outside
-
-route-map TRD-R26 permit 10
- match ip address 78
- match interface Ethernet0/3
-!
-route-map TRD-R24 permit 10
- match ip address 78
- match interface Ethernet0/2
-
-ip nat pool SPB-TRD24 10.78.254.11 10.78.254.15 prefix-length 27
-ip nat pool SPB-TRD26 10.78.254.41 10.78.254.45 prefix-length 27
-ip nat inside source route-map TRD-R24 pool SPB-TRD24
-ip nat inside source route-map TRD-R26 pool SPB-TRD26
-```
-
-Проверка:
-```cfg
-
-SPB-VPC8> ping 192.168.30.10
-
-84 bytes from 192.168.30.10 icmp_seq=1 ttl=59 time=2.093 ms
-84 bytes from 192.168.30.10 icmp_seq=2 ttl=59 time=2.245 ms
-84 bytes from 192.168.30.10 icmp_seq=3 ttl=59 time=2.530 ms
-84 bytes from 192.168.30.10 icmp_seq=4 ttl=59 time=2.851 ms
-84 bytes from 192.168.30.10 icmp_seq=5 ttl=59 time=2.413 ms
-
-SPB-SW9#ping 192.168.30.10
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 192.168.30.10, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms
-
-SPB-R18(config)#do sh ip nat trans
-Pro Inside global      Inside local       Outside local      Outside global
-icmp 10.78.254.43:5    172.16.254.21:5    192.168.30.10:5    192.168.30.10:5
-icmp 10.78.254.43:6    172.16.254.21:6    192.168.30.10:6    192.168.30.10:6
-icmp 10.78.254.43:7    172.16.254.21:7    192.168.30.10:7    192.168.30.10:7
-icmp 10.78.254.42:17983 192.168.20.10:17983 192.168.30.10:17983 192.168.30.10:17983
-icmp 10.78.254.42:18239 192.168.20.10:18239 192.168.30.10:18239 192.168.30.10:18239
-icmp 10.78.254.42:18495 192.168.20.10:18495 192.168.30.10:18495 192.168.30.10:18495
-icmp 10.78.254.42:18751 192.168.20.10:18751 192.168.30.10:18751 192.168.30.10:18751
-icmp 10.78.254.42:19007 192.168.20.10:19007 192.168.30.10:19007 192.168.30.10:19007
-icmp 10.78.254.42:19263 192.168.20.10:19263 192.168.30.10:19263 192.168.30.10:19263
-icmp 10.78.254.42:19519 192.168.20.10:19519 192.168.30.10:19519 192.168.30.10:19519
-icmp 10.78.254.42:19775 192.168.20.10:19775 192.168.30.10:19775 192.168.30.10:19775
-icmp 10.78.254.42:20031 192.168.20.10:20031 192.168.30.10:20031 192.168.30.10:20031
-icmp 10.78.254.42:20287 192.168.20.10:20287 192.168.30.10:20287 192.168.30.10:20287
-icmp 10.78.254.42:20543 192.168.20.10:20543 192.168.30.10:20543 192.168.30.10:20543
-icmp 10.78.254.42:20799 192.168.20.10:20799 192.168.30.10:20799 192.168.30.10:20799
-icmp 10.78.254.42:21055 192.168.20.10:21055 192.168.30.10:21055 192.168.30.10:21055
 ```
 
 ![Скриншот 2](images/image2.png)
 
 
 - ##### Настройте статический NAT для R20.
-Настройка на R15:
 ```cfg
-ip nat inside source static 10.0.254.11 10.77.254.40
-
-
 ```
 Проверка доступности:
 ```cfg
-SPB-VPC8> ping 10.77.254.40
-
-84 bytes from 10.77.254.40 icmp_seq=1 ttl=250 time=2.370 ms
-84 bytes from 10.77.254.40 icmp_seq=2 ttl=250 time=2.079 ms
-84 bytes from 10.77.254.40 icmp_seq=3 ttl=250 time=2.771 ms
-84 bytes from 10.77.254.40 icmp_seq=4 ttl=250 time=2.006 ms
-
-CKD-R28#tracerout 10.77.254.40
-Type escape sequence to abort.
-Tracing the route to 10.77.254.40
-VRF info: (vrf in name/id, vrf out name/id)
-  1 10.0.254.140 0 msec 1 msec 0 msec
-  2 10.0.254.52 1 msec 0 msec 1 msec
-  3 10.0.254.43 0 msec 0 msec 1 msec
-  4 10.77.254.1 2 msec 1 msec 1 msec
-  5 10.0.254.15 1 msec *  11 msec
-CKD-R28#ping 10.77.254.40
-Type escape sequence to abort.
-Sending 5, 100-byte ICMP Echos to 10.77.254.40, timeout is 2 seconds:
-!!!!!
-Success rate is 100 percent (5/5), round-trip min/avg/max = 1/1/2 ms
 ```
 
 
