@@ -1,12 +1,9 @@
-MSK-R15#sh run
-Building configuration...
-
-Current configuration : 4270 bytes
+Current configuration : 4713 bytes
 !
-! Last configuration change at 16:05:53 MSK Mon Dec 9 2024 by cisco
-! NVRAM config last updated at 16:17:00 MSK Mon Dec 9 2024 by cisco
+! Last configuration change at 21:20:25 MSK Tue Dec 10 2024 by cisco
+! NVRAM config last updated at 21:03:44 MSK Tue Dec 10 2024 by cisco
 !
-version 15.4
+version 15.7
 service timestamps debug datetime msec
 service timestamps log datetime msec
 service password-encryption
@@ -29,11 +26,21 @@ aaa authentication login default local
 !
 !
 aaa session-id common
+!
+!
+!
 clock timezone MSK 3 0
 mmi polling-interval 60
 no mmi auto-configure
 no mmi pvc
 mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
 !
 !
 !
@@ -63,12 +70,12 @@ multilink bundle-name authenticated
 !
 !
 !
+!
 username cisco privilege 15 password 7 030752180500
 !
 redundancy
 !
 !
-ip ssh version 2
 !
 !
 !
@@ -89,11 +96,24 @@ interface Loopback0
  ospfv3 2 ipv6 area 0
 !
 interface Tunnel100
+ description "GRE-to-SPB"
  ip address 10.77.78.0 255.255.255.254
  ip mtu 1400
  ip tcp adjust-mss 1360
  tunnel source 10.77.254.33
- tunnel destination 10.78.254.33
+ tunnel destination 10.78.254.1
+!
+interface Tunnel150
+ ip address 10.77.0.1 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ no ip next-hop-self eigrp 77
+ no ip split-horizon eigrp 77
+ ip nhrp authentication OTUS
+ ip nhrp network-id 150
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/2
+ tunnel mode gre multipoint
 !
 interface Ethernet0/0
  description "to R13.e0/2"
@@ -102,6 +122,7 @@ interface Ethernet0/0
  ip virtual-reassembly in
  ip ospf 1 area 10
  ip ospf cost 100
+ duplex auto
  ipv6 address FC02::8/127
  ospfv3 2 ipv6 area 10
  ospfv3 2 ipv6 cost 100
@@ -112,6 +133,7 @@ interface Ethernet0/1
  ip nat inside
  ip virtual-reassembly in
  ip ospf 1 area 10
+ duplex auto
  ipv6 address FC02::6/127
  ospfv3 2 ipv6 area 10
 !
@@ -120,6 +142,7 @@ interface Ethernet0/2
  ip address 10.77.254.33 255.255.255.224
  ip nat outside
  ip virtual-reassembly in
+ duplex auto
  ipv6 address FC02::19/127
 !
 interface Ethernet0/3
@@ -129,6 +152,7 @@ interface Ethernet0/3
  ip virtual-reassembly in
  ip ospf network point-to-point
  ip ospf 1 area 102
+ duplex auto
  ipv6 address FC02::10/127
  ospfv3 network point-to-point
  ospfv3 2 ipv6 area 102
@@ -140,6 +164,7 @@ interface Ethernet1/0
  ip virtual-reassembly in
  ip ospf network point-to-point
  ip ospf 1 area 0
+ duplex auto
  ipv6 address FC02::15/127
  ospfv3 network point-to-point
  ospfv3 2 ipv6 area 0
@@ -147,14 +172,23 @@ interface Ethernet1/0
 interface Ethernet1/1
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/2
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/3
  no ip address
  shutdown
+ duplex auto
+!
+!
+router eigrp 77
+ network 10.77.0.0 0.0.0.255
+ network 172.16.254.0 0.0.0.15
+ network 192.168.10.0 0.0.1.255
 !
 router ospfv3 2
  area 10 stub
@@ -171,8 +205,13 @@ router bgp 1001
  bgp router-id 172.16.255.15
  bgp log-neighbor-changes
  network 10.0.254.14 mask 255.255.255.254
+ network 10.0.254.18 mask 255.255.255.254
  network 10.77.254.32 mask 255.255.255.224
  network 172.16.255.15 mask 255.255.255.255
+ neighbor 10.0.254.18 remote-as 301
+ neighbor 10.0.254.18 soft-reconfiguration inbound
+ neighbor 10.0.254.18 route-map AS301-IN in
+ neighbor 10.0.254.18 filter-list 1 out
  neighbor 10.77.254.62 remote-as 301
  neighbor 10.77.254.62 soft-reconfiguration inbound
  neighbor 10.77.254.62 route-map AS301-IN in
@@ -188,17 +227,14 @@ no ip http secure-server
 ip nat inside source list 78 interface Ethernet0/2 overload
 ip nat inside source static 10.0.254.11 10.77.254.40
 ip route 192.168.20.0 255.255.254.0 Tunnel100
+ip route 192.168.20.0 255.255.254.0 Tunnel100 10.77.78.1
+ip ssh version 2
 !
 !
 ip prefix-list 101 seq 5 deny 10.0.254.4/31
 ip prefix-list 101 seq 10 deny 172.16.255.19/32
 ip prefix-list 101 seq 15 permit 0.0.0.0/0 le 32
-!
-ip prefix-list NO-INT-NETS seq 10 deny 192.168.10.0/23 le 32
-ip prefix-list NO-INT-NETS seq 15 deny 0.0.0.0/0 le 32
-ip prefix-list NO-INT-NETS seq 20 deny 172.16.254.0/28 le 32
-ip prefix-list NO-INT-NETS seq 40 permit 172.16.255.0/24 le 32
-ip prefix-list NO-INT-NETS seq 50 permit 10.254.0.0/16 le 32
+ipv6 ioam timestamp
 !
 !
 ipv6 prefix-list 6101 seq 5 deny FC02::4/127
@@ -206,9 +242,6 @@ ipv6 prefix-list 6101 seq 10 deny FC00::19/128
 ipv6 prefix-list 6101 seq 15 permit ::/0 le 128
 route-map AS301-IN permit 10
  set local-preference 150
-!
-route-map REDISTRIBUTE-OSPF-TO-BGP permit 10
- match ip address prefix-list NO-INT-NETS
 !
 !
 access-list 78 permit 172.16.254.0 0.0.0.15

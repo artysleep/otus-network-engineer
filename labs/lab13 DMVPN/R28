@@ -1,11 +1,8 @@
-CKD-R28#sh run
-Building configuration...
-
-Current configuration : 3270 bytes
+Current configuration : 3418 bytes
 !
-! Last configuration change at 15:58:26 MSK Mon Dec 9 2024 by cisco
+! Last configuration change at 21:13:56 MSK Tue Dec 10 2024 by cisco
 !
-version 15.4
+version 15.7
 service timestamps debug datetime msec
 service timestamps log datetime msec
 service password-encryption
@@ -28,11 +25,21 @@ aaa authentication login default local
 !
 !
 aaa session-id common
+!
+!
+!
 clock timezone MSK 3 0
 mmi polling-interval 60
 no mmi auto-configure
 no mmi pvc
 mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
 !
 !
 !
@@ -61,6 +68,7 @@ multilink bundle-name authenticated
 !
 !
 !
+!
 username cisco privilege 15 password 7 070C285F4D06
 !
 redundancy
@@ -72,7 +80,6 @@ track 1 ip sla 1 reachability
 track 2 ip sla 2 reachability
  delay down 10 up 5
 !
-ip ssh version 2
 !
 !
 !
@@ -96,11 +103,10 @@ interface Tunnel150
  no ip next-hop-self eigrp 77
  no ip split-horizon eigrp 77
  ip nhrp authentication OTUS
- ip nhrp map multicast 10.77.254.1
- ip nhrp map 10.77.0.1 10.77.254.1
+ ip nhrp map multicast 10.77.254.33
+ ip nhrp map 10.77.0.1 10.77.254.33
  ip nhrp network-id 150
  ip nhrp nhs 10.77.0.1
- ip nhrp registration no-unique
  ip tcp adjust-mss 1360
  tunnel source Ethernet0/1
  tunnel mode gre multipoint
@@ -108,14 +114,17 @@ interface Tunnel150
 interface Ethernet0/0
  description "to TRD-R26.e0/1"
  ip address 10.0.254.139 255.255.255.254
+ duplex auto
 !
 interface Ethernet0/1
  description "to TRD-R25.e0/3"
  ip address 10.0.254.141 255.255.255.254
+ duplex auto
 !
 interface Ethernet0/2
  description "to CKD-SW29.e0/2"
  no ip address
+ duplex auto
 !
 interface Ethernet0/2.30
  encapsulation dot1Q 30
@@ -134,27 +143,33 @@ interface Ethernet0/2.55
 interface Ethernet0/3
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/0
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/1
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/2
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/3
  no ip address
  shutdown
+ duplex auto
 !
 !
 router eigrp 77
  network 10.77.0.0 0.0.0.255
  network 172.16.254.32 0.0.0.7
+ network 172.16.255.28 0.0.0.0
  network 192.168.30.0 0.0.1.255
 !
 ip forward-protocol nd
@@ -164,6 +179,7 @@ no ip http server
 no ip http secure-server
 ip route 0.0.0.0 0.0.0.0 10.0.254.138 11 track 1
 ip route 0.0.0.0 0.0.0.0 10.0.254.140 12 track 2
+ip ssh version 2
 !
 ip access-list standard VLAN30
  permit 192.168.30.0 0.0.0.255
@@ -178,6 +194,7 @@ ip sla 2
  icmp-echo 10.0.254.140 source-ip 10.0.254.141
  frequency 10
 ip sla schedule 2 life forever start-time now
+ipv6 ioam timestamp
 !
 route-map PBR permit 10
  match ip address VLAN30

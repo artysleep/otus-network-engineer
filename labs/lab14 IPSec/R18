@@ -1,0 +1,317 @@
+SPB-R18(config-if)#do sh run
+Building configuration...
+
+Current configuration : 8690 bytes
+!
+! Last configuration change at 22:34:33 MSK Tue Dec 10 2024 by cisco
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SPB-R18
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 05080F1C2243
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name otus.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+crypto pki trustpoint VPN
+ enrollment url http://10.77.254.1:80
+ subject-name CN=SPB-R18,OU=VPN,O=Otus,C=RU
+ revocation-check none
+ rsakeypair VPN
+!
+!
+crypto pki certificate chain VPN
+ certificate 05
+  30820336 3082021E A0030201 02020105 300D0609 2A864886 F70D0101 05050030
+  0D310B30 09060355 04031302 4341301E 170D3234 31323130 32303230 31325A17
+  0D323531 32313032 30323031 325A305F 310B3009 06035504 06130252 55310D30
+  0B060355 040A1304 4F747573 310C300A 06035504 0B130356 504E3110 300E0603
+  55040313 07535042 2D523138 3121301F 06092A86 4886F70D 01090216 12535042
+  2D523138 2E6F7475 732E6C6F 63616C30 82012230 0D06092A 864886F7 0D010101
+  05000382 010F0030 82010A02 82010100 A9EAE1BF 7BF0C537 DFDC01A0 F07BB76C
+  223F0ED3 68A0E468 278C22FA F432205C D7C8174E F10946B2 0F44B6A1 760E2D13
+  087E37FC F837224B A2DE397F FBC02ABC 2C2243B1 F0AC363F A1F60D90 2F3CF5EA
+  F285A717 9E7811E2 C289B2E4 B6030362 C4BD7FD2 8D4D9FD9 3A3A8DB8 D8D15E64
+  BCF221DA 09D0BFE4 D87FF319 9991108D A7451772 E1FE898B B905FFB8 47C68F36
+  F798EDCA B698ED86 A7CDED19 9919E9FB 5214D51E 57850C29 D1FA0850 0DCB4E01
+  0927BB6C C8AC16E2 93BBCB13 51881804 8AD3B206 B17834F5 CE0564B4 E54DE7C4
+  68B4400D F62C8E5B 8CD69893 13ACF2B0 9FDB1FCF 9B51B438 2407AC20 B01DC81F
+  5EA74621 808E7A78 303AAABB 9CF80167 02030100 01A34F30 4D300B06 03551D0F
+  04040302 05A0301F 0603551D 23041830 16801446 0B1170B4 B014AAD4 43167828
+  44B7F75F DB2F9930 1D060355 1D0E0416 041475D3 C9B96C23 2709018A BBC5D603
+  5DCBB6D0 5AEA300D 06092A86 4886F70D 01010505 00038201 01006E4D 6EE8C094
+  DC500506 F4EFE4DE BCBBA2AD EFC2FA66 815DA804 F92BDC44 DEA16315 B8BA897B
+  C4B3529C 52628057 5346A08F 4DB2EC14 616FB0A9 E855F92A 0CAA6319 545951AC
+  5EEE7A1A FF9BB26A 8D8F379D CCB45AE0 49FEC761 F6AD4E0F FE164EAE 578B8E81
+  823A3556 2718F1F1 22035C1F 27279250 027D1226 C3F47C82 23212646 AA0BA208
+  D3B71321 270F18FB 5C7A50EA BF3CCD14 A6EDDD64 38A5EA1C 7EA8850D AF1E8004
+  9C299EF5 B4486580 FF4E87D2 8F6D46F3 6E858649 852CB729 773A0960 5CE94C02
+  DB9352A9 02CA60B9 CFDF148B FA62E4CE 30CDA1BC BBA6C7F5 EE7FA157 E92CBA20
+  19D7D8C1 3E598AB5 EDFEAAAD 81473624 CB8E62FE E5914FEB 1758
+        quit
+ certificate ca 01
+  308202F8 308201E0 A0030201 02020101 300D0609 2A864886 F70D0101 04050030
+  0D310B30 09060355 04031302 4341301E 170D3234 31323130 32303035 32365A17
+  0D323731 32313032 30303532 365A300D 310B3009 06035504 03130243 41308201
+  22300D06 092A8648 86F70D01 01010500 0382010F 00308201 0A028201 010098FD
+  A994C744 5DDE48F4 08ED9A8E 87FB72CA D00C76DB D9E8F228 0C226131 42F3B967
+  AE0527E3 D7E103B7 A56EFDF8 AF2650E1 88E065BF B22A9A2E DCC2FE45 EA715597
+  154BB05A 34F20451 04976823 BC2195BD 69AFC972 0365CFEC 2DD03403 A319DCB3
+  3A87C4DE 6AAF6DC0 A28A0CB0 6C5E36BC 84611286 08942E85 E690E7BA 1BE1C451
+  5BF2EC22 7F8CB27A 0030B814 E9AA13CB 32B8B976 D199821A 77C74DA4 78A79D24
+  8315AB31 F3CD2CF7 AFEDA6FE D0EE5674 7877A2EF B58B9244 A451DAC8 C35C662A
+  F772E4CB 7DBC7BC4 39368857 A376C8C7 4AE94503 5C7526E3 4769ADD7 90FDC291
+  7F63EF51 36982C96 676B2AA4 3346068A 9A503CAD 9E2888F3 5B21FDDC 5A210203
+  010001A3 63306130 0F060355 1D130101 FF040530 030101FF 300E0603 551D0F01
+  01FF0404 03020186 301F0603 551D2304 18301680 14460B11 70B4B014 AAD44316
+  782844B7 F75FDB2F 99301D06 03551D0E 04160414 460B1170 B4B014AA D4431678
+  2844B7F7 5FDB2F99 300D0609 2A864886 F70D0101 04050003 82010100 89C48416
+  B18AD6EC F21BD969 FDAB94D5 A828A035 639DC218 9FFBD932 197C5CF9 0D6722BD
+  499A447D 64B74B45 00A10234 EA6F40E5 86A92105 05574E1C 43B4262E 1401DE58
+  D86A8E02 754802AE 4CADB0FA BAA32D17 1F1C93D4 392EA18D 897F6B98 FD28078D
+  14D7494C 16EFBDE0 8C41B4BF E3310D35 B15026A8 07994CC4 2613B73B 3F4F93FC
+  8EDAF0BC 31FB3A3D 14DD484B 4DA52919 C5A913C7 D44AF6B2 C140C4E7 8C075580
+  5B20699E 52127B67 928CAAED 70CC319A 8A6B73C7 B2F89AF5 124FBBAD BB1365E3
+  0CF8878D EE3642AC 4EAE62FC 23721BC8 1FC5BC61 AFB44A24 A25573A9 B8773F37
+  5AAAA60F 1300508C A629039B F499BD28 260DE77F 0707C522 AFEAF6E7
+        quit
+username cisco privilege 15 password 7 070C285F4D06
+!
+redundancy
+!
+!
+!
+!
+crypto ikev2 proposal IKEv2PROPOSAL-MSK
+ encryption aes-cbc-128
+ integrity md5
+ group 2
+!
+crypto ikev2 policy IKEv2POLICY-MSK
+ proposal IKEv2PROPOSAL-MSK
+!
+crypto ikev2 keyring IKEv2KEY-MSK
+ peer SPB-R15
+  address 10.77.78.0 255.255.255.0
+  pre-shared-key OTUS
+ !
+!
+!
+crypto ikev2 profile IKEv2PROFILE-MSK
+ match identity remote address 10.77.254.33 255.255.255.255
+ authentication remote rsa-sig
+ authentication local rsa-sig
+ pki trustpoint VPN
+!
+!
+!
+crypto ipsec transform-set IPSECTS-MSK esp-aes esp-md5-hmac
+ mode transport
+!
+crypto ipsec profile IPSECPROFILE-MSK
+ set transform-set IPSECTS-MSK
+ set ikev2-profile IKEv2PROFILE-MSK
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.18 255.255.255.255
+ ipv6 address FC00::18/128
+!
+interface Tunnel100
+ description "GRE-to-MSK"
+ ip address 10.77.78.1 255.255.255.254
+ ip mtu 1400
+ ip tcp adjust-mss 1360
+ tunnel source 10.78.254.1
+ tunnel destination 10.77.254.33
+ tunnel protection ipsec profile IPSECPROFILE-MSK
+!
+interface Ethernet0/0
+ description 'to SPB-R16.e0/1'
+ bandwidth 5000
+ ip address 10.0.254.70 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ ipv6 address FC02::70/127
+!
+interface Ethernet0/1
+ description 'to SPB-R17.e0/1'
+ ip address 10.0.254.72 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ duplex auto
+ ipv6 address FC02::72/127
+!
+interface Ethernet0/2
+ description "to TRD-R24.e0/2"
+ ip address 10.78.254.1 255.255.255.224
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ ipv6 address FC02::67/127
+!
+interface Ethernet0/3
+ description "to TRD-R26.e0/3"
+ ip address 10.78.254.33 255.255.255.224
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ ipv6 address FC02::69/127
+!
+!
+router eigrp SPB
+ !
+ address-family ipv4 unicast autonomous-system 78
+  !
+  topology base
+   redistribute static
+  exit-af-topology
+  network 0.0.0.0
+  eigrp router-id 172.16.255.18
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 78
+  !
+  topology base
+   redistribute static
+  exit-af-topology
+  eigrp router-id 172.16.255.18
+ exit-address-family
+!
+router bgp 2042
+ bgp log-neighbor-changes
+ bgp bestpath as-path multipath-relax
+ network 10.78.254.0 mask 255.255.255.224
+ network 10.78.254.32 mask 255.255.255.224
+ network 172.16.255.18 mask 255.255.255.255
+ neighbor 10.0.254.66 remote-as 520
+ neighbor 10.0.254.66 prefix-list NO-TRANSIT out
+ neighbor 10.0.254.68 remote-as 520
+ neighbor 10.0.254.68 prefix-list NO-TRANSIT out
+ neighbor 10.78.254.30 remote-as 520
+ neighbor 10.78.254.30 prefix-list NO-TRANSIT out
+ neighbor 10.78.254.62 remote-as 520
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat pool SPB-TRD24 10.78.254.11 10.78.254.15 prefix-length 27
+ip nat pool SPB-TRD26 10.78.254.41 10.78.254.45 prefix-length 27
+ip nat inside source route-map TRD-R24 pool SPB-TRD24
+ip nat inside source route-map TRD-R26 pool SPB-TRD26
+ip route 0.0.0.0 0.0.0.0 Null0
+ip route 172.16.254.0 255.255.255.240 Tunnel100 10.77.78.0
+ip route 172.16.254.32 255.255.255.248 Tunnel100 10.77.78.0
+ip route 192.168.10.0 255.255.254.0 Tunnel100 10.77.78.0
+ip route 192.168.30.0 255.255.254.0 Tunnel100 10.77.78.0
+ip ssh version 2
+!
+!
+ip prefix-list NO-TRANSIT seq 10 permit 10.0.254.64/28
+ip prefix-list NO-TRANSIT seq 20 permit 192.168.20.0/23
+ip prefix-list NO-TRANSIT seq 30 permit 172.16.254.16/28
+ip prefix-list NO-TRANSIT seq 41 permit 172.16.255.18/32
+ip prefix-list NO-TRANSIT seq 42 permit 172.16.255.16/32
+ip prefix-list NO-TRANSIT seq 43 permit 172.16.255.17/32
+ip prefix-list NO-TRANSIT seq 44 permit 172.16.255.32/32
+ip prefix-list NO-TRANSIT seq 50 deny 0.0.0.0/0 le 32
+ipv6 route ::/0 Null0
+ipv6 ioam timestamp
+!
+route-map TRD-R26 permit 10
+ match ip address 78
+ match interface Ethernet0/3
+!
+route-map TRD-R24 permit 10
+ match ip address 78
+ match interface Ethernet0/2
+!
+!
+access-list 78 permit 192.168.20.0 0.0.1.255
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+!
+end

@@ -1,11 +1,10 @@
-LBT-R27#sh run
 Building configuration...
 
-Current configuration : 1919 bytes
+Current configuration : 2068 bytes
 !
-! Last configuration change at 15:58:32 MSK Mon Dec 9 2024 by cisco
+! Last configuration change at 21:13:53 MSK Tue Dec 10 2024 by cisco
 !
-version 15.4
+version 15.7
 service timestamps debug datetime msec
 service timestamps log datetime msec
 service password-encryption
@@ -28,11 +27,21 @@ aaa authentication login default local
 !
 !
 aaa session-id common
+!
+!
+!
 clock timezone MSK 3 0
 mmi polling-interval 60
 no mmi auto-configure
 no mmi pvc
 mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
 !
 !
 !
@@ -61,12 +70,12 @@ multilink bundle-name authenticated
 !
 !
 !
+!
 username cisco privilege 15 password 7 02050D480809
 !
 redundancy
 !
 !
-ip ssh version 2
 !
 !
 !
@@ -90,8 +99,8 @@ interface Tunnel150
  no ip next-hop-self eigrp 77
  no ip split-horizon eigrp 77
  ip nhrp authentication OTUS
- ip nhrp map multicast 10.77.254.1
- ip nhrp map 10.77.0.1 10.77.254.1
+ ip nhrp map multicast 10.77.254.33
+ ip nhrp map 10.77.0.1 10.77.254.33
  ip nhrp network-id 150
  ip nhrp nhs 10.77.0.1
  ip tcp adjust-mss 1360
@@ -101,34 +110,42 @@ interface Tunnel150
 interface Ethernet0/0
  description "to TRD-R25.e0/1"
  ip address 10.0.254.89 255.255.255.254
+ duplex auto
 !
 interface Ethernet0/1
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet0/2
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet0/3
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/0
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/1
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/2
  no ip address
  shutdown
+ duplex auto
 !
 interface Ethernet1/3
  no ip address
  shutdown
+ duplex auto
 !
 !
 router eigrp 77
@@ -141,7 +158,9 @@ ip forward-protocol nd
 no ip http server
 no ip http secure-server
 ip route 0.0.0.0 0.0.0.0 10.0.254.88
+ip ssh version 2
 !
+ipv6 ioam timestamp
 !
 !
 !
