@@ -1,0 +1,320 @@
+Building configuration...
+
+  
+  
+Current configuration : 7986 bytes
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname CKD-R28
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 01100F175804
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name otus.local
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+crypto pki trustpoint VPN
+ enrollment url http://10.77.254.1:80
+ subject-name CN=CRD-R28,OU=VPN,O=Otus,C=RU 
+ revocation-check none
+ rsakeypair VPN
+!
+!
+crypto pki certificate chain VPN
+ certificate 02
+  30820336 3082021E A0030201 02020102 300D0609 2A864886 F70D0101 05050030 
+  0D310B30 09060355 04031302 4341301E 170D3234 31323130 32303131 34325A17 
+  0D323531 32313032 30313134 325A305F 310B3009 06035504 06130252 55310D30 
+  0B060355 040A1304 4F747573 310C300A 06035504 0B130356 504E3110 300E0603 
+  55040313 07435244 2D523238 3121301F 06092A86 4886F70D 01090216 12434B44 
+  2D523238 2E6F7475 732E6C6F 63616C30 82012230 0D06092A 864886F7 0D010101 
+  05000382 010F0030 82010A02 82010100 A80D5523 5E30767C A36C25F5 6C298716 
+  214BD075 483EBE39 51605A00 233FBA8E D1680C51 D050922C 0DBFD0E8 09A6E033 
+  BE69530E 985DE5CC 27DA5833 05D0FBEA 9B3AE842 DB5D767D F0A09257 1BF9A422 
+  D61D12BD 2B454918 F495D759 04637D9A 70211CA5 0303D4D6 D03C20CB 918AF007 
+  F4169046 40444D80 4E921EAF 80176778 8375D349 D90B5555 DED7CABC 4203EEF4 
+  630B794A 7E996DAE 7F0FF496 0CB75D26 3BC2704E 47C13C4A DCCF6F94 5CDA1FA3 
+  C465F004 0BC82A9F 616D7216 5F3E633C B68856F9 16BE66AA 38B1356F 7D7F379F 
+  5DED6EED 71DAFBA3 07668214 C9DA9A23 699CAC9B 15CDD9C9 FE9F3982 69F3770D 
+  B208458C DBD6933E 924E8F8A E37FF59B 02030100 01A34F30 4D300B06 03551D0F 
+  04040302 05A0301F 0603551D 23041830 16801446 0B1170B4 B014AAD4 43167828 
+  44B7F75F DB2F9930 1D060355 1D0E0416 0414A78C CF173BEC B468DA1B 1C078D43 
+  E9CFA9BC 5949300D 06092A86 4886F70D 01010505 00038201 0100295C 7986A74D 
+  FB1B27FF D48C33E8 13821000 DE31FB9B DDB79343 81A20707 995FDC82 B0984BFF 
+  EF573051 494E4431 3C5B8B80 55892D68 12943C71 A1D7FB40 012039CB 6D22B2D3 
+  DE50EC66 B09422D1 8CD6E3A0 8D001381 1984ED5A 84647332 EB6D97DC 832D2830 
+  BECEB5DB B104ED28 48BF5AB4 5BA6FB2E B92B383F 25CF007A DED22FE2 36D32A6E 
+  E35360B7 5BAE7856 1559B411 2F6D453A D7C8023D 44AA85D8 C56546E1 4174EE9A 
+  1A71BCDB D57D7402 606E8D0A DD636139 F6EF9341 8D4A7C28 912CD391 446AF9B1 
+  68458BF1 0B45F68B 368E43CD A0D70981 26E7E7AD E0BF30F7 FD5E6E0A 300BEDFB 
+  F0F2CDEB FCB6F2A6 BDC680B6 FB43B38B D6F567AA 11ED4B17 1B4F
+  	quit
+ certificate ca 01
+  308202F8 308201E0 A0030201 02020101 300D0609 2A864886 F70D0101 04050030 
+  0D310B30 09060355 04031302 4341301E 170D3234 31323130 32303035 32365A17 
+  0D323731 32313032 30303532 365A300D 310B3009 06035504 03130243 41308201 
+  22300D06 092A8648 86F70D01 01010500 0382010F 00308201 0A028201 010098FD 
+  A994C744 5DDE48F4 08ED9A8E 87FB72CA D00C76DB D9E8F228 0C226131 42F3B967 
+  AE0527E3 D7E103B7 A56EFDF8 AF2650E1 88E065BF B22A9A2E DCC2FE45 EA715597 
+  154BB05A 34F20451 04976823 BC2195BD 69AFC972 0365CFEC 2DD03403 A319DCB3 
+  3A87C4DE 6AAF6DC0 A28A0CB0 6C5E36BC 84611286 08942E85 E690E7BA 1BE1C451 
+  5BF2EC22 7F8CB27A 0030B814 E9AA13CB 32B8B976 D199821A 77C74DA4 78A79D24 
+  8315AB31 F3CD2CF7 AFEDA6FE D0EE5674 7877A2EF B58B9244 A451DAC8 C35C662A 
+  F772E4CB 7DBC7BC4 39368857 A376C8C7 4AE94503 5C7526E3 4769ADD7 90FDC291 
+  7F63EF51 36982C96 676B2AA4 3346068A 9A503CAD 9E2888F3 5B21FDDC 5A210203 
+  010001A3 63306130 0F060355 1D130101 FF040530 030101FF 300E0603 551D0F01 
+  01FF0404 03020186 301F0603 551D2304 18301680 14460B11 70B4B014 AAD44316 
+  782844B7 F75FDB2F 99301D06 03551D0E 04160414 460B1170 B4B014AA D4431678 
+  2844B7F7 5FDB2F99 300D0609 2A864886 F70D0101 04050003 82010100 89C48416 
+  B18AD6EC F21BD969 FDAB94D5 A828A035 639DC218 9FFBD932 197C5CF9 0D6722BD 
+  499A447D 64B74B45 00A10234 EA6F40E5 86A92105 05574E1C 43B4262E 1401DE58 
+  D86A8E02 754802AE 4CADB0FA BAA32D17 1F1C93D4 392EA18D 897F6B98 FD28078D 
+  14D7494C 16EFBDE0 8C41B4BF E3310D35 B15026A8 07994CC4 2613B73B 3F4F93FC 
+  8EDAF0BC 31FB3A3D 14DD484B 4DA52919 C5A913C7 D44AF6B2 C140C4E7 8C075580 
+  5B20699E 52127B67 928CAAED 70CC319A 8A6B73C7 B2F89AF5 124FBBAD BB1365E3 
+  0CF8878D EE3642AC 4EAE62FC 23721BC8 1FC5BC61 AFB44A24 A25573A9 B8773F37 
+  5AAAA60F 1300508C A629039B F499BD28 260DE77F 0707C522 AFEAF6E7
+  	quit
+username cisco privilege 15 password 7 070C285F4D06
+!
+redundancy
+!
+!
+track 1 ip sla 1 reachability
+ delay down 10 up 5
+!
+track 2 ip sla 2 reachability
+ delay down 10 up 5
+!
+! 
+!
+crypto ikev2 proposal IKEv2PROPOSAL-DMVPN 
+ encryption aes-cbc-128
+ integrity md5
+ group 2
+!
+crypto ikev2 policy IKEv2POLICY-DMVPN 
+ proposal IKEv2PROPOSAL-DMVPN
+!
+crypto ikev2 keyring IKEv2-DMVPN
+ peer dmvpn-node
+  address 0.0.0.0 0.0.0.0
+  pre-shared-key OTUS-DMVPN
+ !
+!
+!
+crypto ikev2 profile IKEv2PROFILE-DMVPN
+ match identity remote address 0.0.0.0 
+ authentication remote rsa-sig
+ authentication local rsa-sig
+ pki trustpoint VPN
+!
+!
+!
+crypto ipsec transform-set IPSECTS-DMVPN esp-aes esp-md5-hmac 
+ mode transport
+!
+crypto ipsec profile IPSECPROFILE-DMVPN
+ set transform-set IPSECTS-DMVPN 
+ set ikev2-profile IKEv2PROFILE-DMVPN
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.28 255.255.255.255
+!
+interface Tunnel150
+ ip address 10.77.0.3 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ no ip next-hop-self eigrp 77
+ no ip split-horizon eigrp 77
+ ip nhrp authentication OTUS
+ ip nhrp map multicast 10.77.254.33
+ ip nhrp map 10.77.0.1 10.77.254.33
+ ip nhrp network-id 150
+ ip nhrp nhs 10.77.0.1
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/1
+ tunnel mode gre multipoint
+ tunnel protection ipsec profile IPSECPROFILE-DMVPN
+!
+interface Ethernet0/0
+ description "to TRD-R26.e0/1" 
+ ip address 10.0.254.139 255.255.255.254
+ duplex auto
+!
+interface Ethernet0/1
+ description "to TRD-R25.e0/3"
+ ip address 10.0.254.141 255.255.255.254
+ duplex auto
+!
+interface Ethernet0/2
+ description "to CKD-SW29.e0/2"
+ no ip address
+ duplex auto
+!
+interface Ethernet0/2.30
+ encapsulation dot1Q 30
+ ip address 192.168.30.1 255.255.255.0
+ ip policy route-map PBR
+!
+interface Ethernet0/2.31
+ encapsulation dot1Q 31
+ ip address 192.168.31.1 255.255.255.0
+ ip policy route-map PBR
+!
+interface Ethernet0/2.55
+ encapsulation dot1Q 55
+ ip address 172.16.254.33 255.255.255.248
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+ duplex auto
+!
+!
+router eigrp 77
+ network 10.77.0.0 0.0.0.255
+ network 172.16.254.32 0.0.0.7
+ network 172.16.255.28 0.0.0.0
+ network 192.168.30.0 0.0.1.255
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.254.138 11 track 1
+ip route 0.0.0.0 0.0.0.0 10.0.254.140 12 track 2
+ip ssh version 2
+!
+ip access-list standard VLAN30
+ permit 192.168.30.0 0.0.0.255
+ip access-list standard VLAN31
+ permit 192.168.31.0 0.0.0.255
+!
+ip sla 1
+ icmp-echo 10.0.254.138 source-ip 10.0.254.139
+ frequency 10
+ip sla schedule 1 life forever start-time now
+ip sla 2
+ icmp-echo 10.0.254.140 source-ip 10.0.254.141
+ frequency 10
+ip sla schedule 2 life forever start-time now
+ipv6 ioam timestamp
+!
+route-map PBR permit 10
+ match ip address VLAN30
+ set ip next-hop verify-availability 10.0.254.138 10 track 1
+ set ip next-hop verify-availability 10.0.254.140 20 track 2
+!
+route-map PBR permit 20
+ match ip address VLAN31
+ set ip next-hop verify-availability 10.0.254.140 10 track 2
+ set ip next-hop verify-availability 10.0.254.138 20 track 1
+!
+route-map PBR deny 30
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+!
+end

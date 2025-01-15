@@ -1,0 +1,16 @@
+---
+
+- name: Config new router to DMVPN
+  hosts: new_cisco_routers
+  gather_facts: false
+  tasks:
+
+    - name: Render a Jinja2 template onto an IOS device
+      cisco.ios.ios_config:
+        backup: true
+        src: ../../templates/cisco.conf.j2
+
+    - name: Save running to startup when modified
+      cisco.ios.ios_config:
+        save_when: modified
+    

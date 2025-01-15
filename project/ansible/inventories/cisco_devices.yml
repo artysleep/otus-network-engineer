@@ -1,0 +1,74 @@
+cisco_devices:
+  children:
+    cisco_routers:
+    cisco_switches:
+
+new_cisco_routers:
+  hosts:
+    VRT-R30:
+    AND-R31:
+    
+cisco_routers:
+  hosts:
+    MSK-R12:
+      ansible_host: 172.16.255.12
+    MSK-R13:
+      ansible_host: 172.16.255.13
+    MSK-R14:
+      ansible_host: 172.16.255.14
+    MSK-R15:
+      ansible_host: 172.16.255.15
+    MSK-R19:
+      ansible_host: 172.16.255.19
+    MSK-R20:
+      ansible_host: 172.16.255.20
+    SPB-R18:
+      ansible_host: 172.16.255.18
+    SPB-R17:
+      ansible_host: 172.16.255.17
+    SPB-R16:
+      ansible_host: 172.16.255.16
+    SPB-R32:
+      ansible_host: 172.16.255.32
+    KTN-R22:
+      ansible_host: 172.16.255.22
+    LMS-R21:
+      ansible_host: 172.16.255.21
+    TRD-R23:
+      ansible_host: 172.16.255.23
+    TRD-R24:
+      ansible_host: 172.16.255.24
+    TRD-R25:
+      ansible_host: 172.16.255.25
+    TRD-R26:
+      ansible_host: 172.16.255.26
+    LBT-R27:
+      ansible_host: 172.16.255.27
+    CKD-R28:
+      ansible_host: 172.16.255.28
+    VRT-R30:
+      ansible_host: 10.11.254.62
+    AND-R31:
+      ansible_host: 10.87.254.62
+
+cisco_switches:
+  hosts:
+    MSK-SW2:
+      ansible_host: 172.16.254.7
+    MSK-SW3:
+      ansible_host: 172.16.254.6
+    MSK-SW4:
+      ansible_host: 172.16.254.4
+    MSK-SW5:
+      ansible_host: 172.16.254.5
+    SPB-SW9:
+      ansible_host: 172.16.254.21
+    SPB-SW10:
+      ansible_host: 172.16.254.22
+    CKD-SW10:
+      ansible_host: 172.16.254.34
+    
+
+    
+
+

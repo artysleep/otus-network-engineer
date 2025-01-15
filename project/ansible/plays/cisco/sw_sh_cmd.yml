@@ -1,0 +1,38 @@
+---
+
+- name: Run show command on all switches
+  hosts: cisco_switches
+  gather_facts: false
+
+  tasks:
+      - name: show
+        ios_command:
+          commands: 
+            - show version
+            - show mac address-table
+            - show arp
+            - show ip int br
+            - show int desc
+            - show vlan
+            - show interfaces trunk
+            - show etherchannel
+            - show spanning-tree      
+        register: sh_cmds
+      
+      - name: Copy facts to files
+        copy:
+          content: "#######\nshow version\n{{ sh_cmds.stdout[0] }}\n#######\n
+        \n\n#######\nshow mac address-table:\n{{ sh_cmds.stdout[1] }}\n#######\n
+        \n\n#######\nshow arp:\n{{ sh_cmds.stdout[2] }}\n#######\n
+        \n\n#######\nshow ip int br:\n{{ sh_cmds.stdout[3] }}\n#######\n
+        \n\n#######\nshow int desc:\n{{ sh_cmds.stdout[4] }}\n#######\n
+        \n\n#######\nshow vlan:\n{{ sh_cmds.stdout[5] }}\n#######\n
+        \n\n#######\nshow interfaces trunk:\n{{ sh_cmds.stdout[6] }}\n#######\n
+        \n\n#######\nshow etherchannel:\n{{ sh_cmds.stdout[7] }}\n#######\n
+        \n\n#######\nshow spanning-tree:\n{{ sh_cmds.stdout[8] }}\n######\n" 
+          dest: "/home/gis/reports/sw/show_stats/{{inventory_hostname}}_stats.txt"
+
+      
+ #     - name: display output
+ #       debug:
+ #        var=sh_mac_add.stdout

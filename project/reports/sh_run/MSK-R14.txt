@@ -1,0 +1,269 @@
+Building configuration...
+
+  
+Current configuration : 5529 bytes
+!
+! No configuration change since last restart
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname MSK-R14
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 094F471A1A0A
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name otus.ru
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+crypto pki server CA
+ no database archive
+!
+crypto pki trustpoint CA
+ revocation-check crl
+ rsakeypair CA
+!
+!
+crypto pki certificate chain CA
+ certificate ca 01
+  308202F8 308201E0 A0030201 02020101 300D0609 2A864886 F70D0101 04050030 
+  0D310B30 09060355 04031302 4341301E 170D3234 31323130 32303035 32365A17 
+  0D323731 32313032 30303532 365A300D 310B3009 06035504 03130243 41308201 
+  22300D06 092A8648 86F70D01 01010500 0382010F 00308201 0A028201 010098FD 
+  A994C744 5DDE48F4 08ED9A8E 87FB72CA D00C76DB D9E8F228 0C226131 42F3B967 
+  AE0527E3 D7E103B7 A56EFDF8 AF2650E1 88E065BF B22A9A2E DCC2FE45 EA715597 
+  154BB05A 34F20451 04976823 BC2195BD 69AFC972 0365CFEC 2DD03403 A319DCB3 
+  3A87C4DE 6AAF6DC0 A28A0CB0 6C5E36BC 84611286 08942E85 E690E7BA 1BE1C451 
+  5BF2EC22 7F8CB27A 0030B814 E9AA13CB 32B8B976 D199821A 77C74DA4 78A79D24 
+  8315AB31 F3CD2CF7 AFEDA6FE D0EE5674 7877A2EF B58B9244 A451DAC8 C35C662A 
+  F772E4CB 7DBC7BC4 39368857 A376C8C7 4AE94503 5C7526E3 4769ADD7 90FDC291 
+  7F63EF51 36982C96 676B2AA4 3346068A 9A503CAD 9E2888F3 5B21FDDC 5A210203 
+  010001A3 63306130 0F060355 1D130101 FF040530 030101FF 300E0603 551D0F01 
+  01FF0404 03020186 301F0603 551D2304 18301680 14460B11 70B4B014 AAD44316 
+  782844B7 F75FDB2F 99301D06 03551D0E 04160414 460B1170 B4B014AA D4431678 
+  2844B7F7 5FDB2F99 300D0609 2A864886 F70D0101 04050003 82010100 89C48416 
+  B18AD6EC F21BD969 FDAB94D5 A828A035 639DC218 9FFBD932 197C5CF9 0D6722BD 
+  499A447D 64B74B45 00A10234 EA6F40E5 86A92105 05574E1C 43B4262E 1401DE58 
+  D86A8E02 754802AE 4CADB0FA BAA32D17 1F1C93D4 392EA18D 897F6B98 FD28078D 
+  14D7494C 16EFBDE0 8C41B4BF E3310D35 B15026A8 07994CC4 2613B73B 3F4F93FC 
+  8EDAF0BC 31FB3A3D 14DD484B 4DA52919 C5A913C7 D44AF6B2 C140C4E7 8C075580 
+  5B20699E 52127B67 928CAAED 70CC319A 8A6B73C7 B2F89AF5 124FBBAD BB1365E3 
+  0CF8878D EE3642AC 4EAE62FC 23721BC8 1FC5BC61 AFB44A24 A25573A9 B8773F37 
+  5AAAA60F 1300508C A629039B F499BD28 260DE77F 0707C522 AFEAF6E7
+  	quit
+username cisco privilege 15 password 7 094F471A1A0A
+!
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.14 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address FC00::14/128
+ ospfv3 2 ipv6 area 0
+!
+interface Ethernet0/0
+ description "to R12.e0/2"
+ ip address 10.0.254.12 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 1 area 10
+ ip ospf cost 200
+ duplex auto
+ ipv6 address FC02::12/127
+ ospfv3 2 ipv6 area 10
+!
+interface Ethernet0/1
+ description "to R13.e0/3"
+ ip address 10.0.254.2 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 1 area 10
+ ip ospf cost 200
+ duplex auto
+ ipv6 address FC02::2/127
+ ospfv3 2 ipv6 area 10
+ ospfv3 2 ipv6 cost 100
+!
+interface Ethernet0/2
+ description "to KTN-R22.e0/0"
+ ip address 10.77.254.1 255.255.255.224
+ ip nat outside
+ ip virtual-reassembly in
+ duplex auto
+ ipv6 address FC02::17/127
+!
+interface Ethernet0/3
+ description "to R19.e0/0"
+ ip address 10.0.254.4 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf network point-to-point
+ ip ospf 1 area 101
+ duplex auto
+ ipv6 address FC02::4/127
+ ospfv3 network point-to-point
+ ospfv3 2 ipv6 area 101
+!
+interface Ethernet1/0
+ description "to R15.e1/0 for OSPF"
+ ip address 10.0.254.14 255.255.255.254
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ duplex auto
+ ipv6 address FC02::14/127
+ ospfv3 network point-to-point
+ ospfv3 2 ipv6 area 0
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+ duplex auto
+!
+router ospfv3 2
+ area 101 stub no-summary
+ area 10 stub
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+router ospf 1
+ area 10 stub
+ area 101 stub no-summary
+!
+router bgp 1001
+ bgp router-id 172.16.255.14
+ bgp log-neighbor-changes
+ network 10.0.254.14 mask 255.255.255.254
+ network 10.0.254.16 mask 255.255.255.254
+ network 10.77.254.0 mask 255.255.255.224
+ network 10.250.0.0 mask 255.255.255.0
+ network 172.16.255.14 mask 255.255.255.255
+ neighbor 10.77.254.30 remote-as 101
+ neighbor 10.77.254.30 soft-reconfiguration inbound
+ neighbor 10.77.254.30 route-map AS_PATH_PREP out
+ neighbor 10.77.254.30 filter-list 1 out
+ neighbor 172.16.255.15 remote-as 1001
+ neighbor 172.16.255.15 update-source Loopback0
+!
+ip forward-protocol nd
+!
+ip as-path access-list 1 permit ^$
+!
+ip http server
+no ip http secure-server
+ip nat inside source list 78 interface Ethernet0/2 overload
+ip nat inside source static 10.0.254.5 10.77.254.14
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+route-map AS_PATH_PREP permit 10
+ set as-path prepend 1001 1001 1001
+!
+!
+access-list 78 permit 192.168.10.0 0.0.1.255
+access-list 78 permit 172.16.254.0 0.0.0.15
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+ntp server 172.16.255.12
+ntp server 172.16.255.13
+!
+end

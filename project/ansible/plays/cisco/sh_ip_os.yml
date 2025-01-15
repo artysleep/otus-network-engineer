@@ -1,0 +1,50 @@
+---
+
+- name: Run show commands on routers
+  hosts: cisco_routers
+  gather_facts: false
+
+  tasks:
+
+     - name: sh ip ro os
+       ios_command:
+         commands: show ip route ospf
+       register: sh_ip_ro_os
+
+     - name: sh ip6 ro os
+       ios_command:
+         commands: show ipv6 route ospf 
+       register: sh_ipv6_ro_os
+
+#     - name: sh ip os da ext
+#       ios_command:
+#         commands: show ip ospf database external
+#       register: sh_ip_os_da_ext
+
+#     - name: display output
+#       debug:
+#         var=sh_ip_os_da_ro.stdout
+
+     - name: display output
+       debug:
+         var=sh_ip_ro_os.stdout
+
+     - name: display output
+       debug:
+         var=sh_ipv6_ro_os.stdout
+
+
+#    - name: run sh ip arp
+#      ios_command:
+#        commands: sh ip arp
+
+
+#- name: Run command on R1
+#  hosts: 192.168.100.1
+#  gather_facts: false
+
+#  tasks:
+
+#    - name: run sh int status
+#      ios_command:
+#        commands: sh clock

@@ -1,0 +1,323 @@
+ 
+
+######
+show version
+Cisco IOS Software, Linux Software (I86BI_LINUX-ADVENTERPRISEK9-M), Version 15.7(3)M2, DEVELOPMENT TEST SOFTWARE
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2018 by Cisco Systems, Inc.
+Compiled Wed 28-Mar-18 11:18 by prod_rel_team
+
+ROM: Bootstrap program is Linux
+
+TRD-R24 uptime is 45 minutes
+System returned to ROM by reload at 0
+System image file is "unix:/opt/unetlab/addons/iol/bin/i86bi_Linux-L3-AdvEnterpriseK9-M2_1"
+Last reload reason: Unknown reason
+
+
+
+This product contains cryptographic features and is subject to United
+States and local country laws governing import, export, transfer and
+use. Delivery of Cisco cryptographic products does not imply
+third-party authority to import, export, distribute or use encryption.
+Importers, exporters, distributors and users are responsible for
+compliance with U.S. and local country laws. By using this product you
+agree to comply with applicable laws and regulations. If you are unable
+to comply with U.S. and local laws, return this product immediately.
+
+A summary of U.S. laws governing Cisco cryptographic products may be found at:
+http://www.cisco.com/wwl/export/crypto/tool/stqrg.html
+
+If you require further assistance please contact us by sending email to
+export@cisco.com.
+
+Linux Unix (Intel-x86) processor with 863257K bytes of memory.
+Processor board ID 67109248
+8 Ethernet interfaces
+1024K bytes of NVRAM.
+
+
+
+Configuration register is 0x0
+#######
+ 
+
+######
+show arp
+Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  10.0.254.40             -   aabb.cc01.8000  ARPA   Ethernet0/0
+Internet  10.0.254.41            44   aabb.cc01.5020  ARPA   Ethernet0/0
+Internet  10.0.254.50            44   aabb.cc01.7020  ARPA   Ethernet0/2
+Internet  10.0.254.51             -   aabb.cc01.8020  ARPA   Ethernet0/2
+Internet  10.0.254.54             -   aabb.cc01.8010  ARPA   Ethernet0/1
+Internet  10.0.254.55            44   aabb.cc01.a000  ARPA   Ethernet0/1
+Internet  10.78.254.1            44   aabb.cc01.2020  ARPA   Ethernet0/3
+Internet  10.78.254.30            -   aabb.cc01.8030  ARPA   Ethernet0/3
+#######
+ 
+
+######
+show ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+Ethernet0/0                10.0.254.40     YES NVRAM  up                    up      
+Ethernet0/1                10.0.254.54     YES NVRAM  up                    up      
+Ethernet0/2                10.0.254.51     YES NVRAM  up                    up      
+Ethernet0/3                10.78.254.30    YES NVRAM  up                    up      
+Ethernet1/0                unassigned      YES NVRAM  administratively down down    
+Ethernet1/1                unassigned      YES NVRAM  administratively down down    
+Ethernet1/2                unassigned      YES NVRAM  administratively down down    
+Ethernet1/3                unassigned      YES NVRAM  administratively down down    
+Loopback0                  172.16.255.24   YES NVRAM  up                    up
+#######
+ 
+
+######
+show int desc
+Interface                      Status         Protocol Description
+Et0/0                          up             up       "to LMS-R2.e0/2"
+Et0/1                          up             up       "to TRD-R26.e0/0"
+Et0/2                          up             up       "to TRD-R23.e0/2"
+Et0/3                          up             up       "to SPB-R18.e0/2"
+Et1/0                          admin down     down     
+Et1/1                          admin down     down     
+Et1/2                          admin down     down     
+Et1/3                          admin down     down     
+Lo0                            up             up
+#######
+ 
+
+######
+show ip ro st
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+
+Gateway of last resort is not set
+#######
+ 
+
+######
+show ip ro os
+
+#######
+ 
+
+######
+show ip ospf topology-info
+
+#######
+ 
+
+######
+show ip ospf neighbor
+
+#######
+ 
+
+######
+show ip ro bgp
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+
+Gateway of last resort is not set
+
+      10.0.0.0/8 is variably subnetted, 18 subnets, 4 masks
+B        10.0.254.14/31 [20/0] via 10.0.254.41, 00:43:12
+B        10.0.254.88/31 [200/0] via 172.16.255.25, 00:43:43
+B        10.0.254.138/31 [200/0] via 172.16.255.26, 00:43:42
+B        10.0.254.140/31 [200/0] via 172.16.255.25, 00:43:43
+B        10.77.254.0/27 [20/0] via 10.0.254.41, 00:42:41
+B        10.77.254.32/27 [20/0] via 10.0.254.41, 00:43:12
+B        10.78.254.32/27 [200/0] via 172.16.255.26, 00:43:42
+B        10.250.0.0/24 [20/0] via 10.0.254.41, 00:43:12
+      172.16.0.0/32 is subnetted, 9 subnets
+B        172.16.255.14 [20/0] via 10.0.254.41, 00:42:41
+B        172.16.255.15 [20/0] via 10.0.254.41, 00:43:12
+B        172.16.255.18 [20/0] via 10.78.254.1, 00:43:40
+B        172.16.255.21 [20/0] via 10.0.254.41, 00:43:43
+B        172.16.255.22 [200/0] via 172.16.255.23, 00:43:43
+#######
+ 
+
+######
+show ip bgp
+BGP table version is 30, local router ID is 172.16.255.24
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal, 
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter, 
+              x best-external, a additional-path, c RIB-compressed, 
+              t secondary path, 
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
+
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>   10.0.254.14/31   10.0.254.41                            0 301 1001 i
+ r>i  10.0.254.50/31   172.16.255.26           20    100      0 ?
+ *>   10.0.254.52/31   10.0.254.50             20         32768 ?
+ r>i  10.0.254.54/31   172.16.255.23           20    100      0 ?
+ *>   10.0.254.56/31   10.0.254.55             20         32768 ?
+ *>i  10.0.254.88/31   172.16.255.25            0    100      0 i
+ *>i  10.0.254.138/31  172.16.255.26            0    100      0 i
+ *>i  10.0.254.140/31  172.16.255.25            0    100      0 i
+ *>   10.77.254.0/27   10.0.254.41                            0 301 1001 i
+ *>   10.77.254.32/27  10.0.254.41                            0 301 1001 i
+ r>i  10.78.254.0/27   172.16.255.26            0    100      0 2042 i
+ *>i  10.78.254.32/27  172.16.255.26            0    100      0 i
+ *>   10.250.0.0/24    10.0.254.41                            0 301 1001 i
+ *>   172.16.255.14/32 10.0.254.41                            0 301 1001 i
+ *>   172.16.255.15/32 10.0.254.41                            0 301 1001 i
+ *>   172.16.255.18/32 10.78.254.1              0             0 2042 i
+ *>   172.16.255.21/32 10.0.254.41              0             0 301 i
+ *>i  172.16.255.22/32 172.16.255.23            0    100      0 101 i
+ *                     10.0.254.41                            0 301 101 i
+ * i  172.16.255.23/32 172.16.255.23            0    100      0 i
+ *>                    10.0.254.50             20         32768 ?
+ * i  172.16.255.24/32 172.16.255.23           20    100      0 ?
+ *>                    0.0.0.0                  0         32768 i
+ * i  172.16.255.25/32 172.16.255.25            0    100      0 i
+ *>                    10.0.254.55             30         32768 ?
+ * i  172.16.255.26/32 172.16.255.23           30    100      0 ?
+ *>                    10.0.254.55             20         32768 ?
+#######
+ 
+
+######
+show ip bgp nexthops
+# Paths   Nexthop Address
+       8   10.0.254.41
+       4   172.16.255.26
+       2   10.0.254.50
+       5   172.16.255.23
+       3   10.0.254.55
+       3   172.16.255.25
+       1   10.78.254.1
+#######
+ 
+
+######
+show ip ro isis
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+
+Gateway of last resort is not set
+
+      10.0.0.0/8 is variably subnetted, 18 subnets, 4 masks
+i L2     10.0.254.52/31 [115/20] via 10.0.254.50, 00:44:45, Ethernet0/2
+i L2     10.0.254.56/31 [115/20] via 10.0.254.55, 00:44:48, Ethernet0/1
+      172.16.0.0/32 is subnetted, 9 subnets
+i L2     172.16.255.23 [115/20] via 10.0.254.50, 00:44:45, Ethernet0/2
+i L2     172.16.255.25 [115/30] via 10.0.254.55, 00:44:45, Ethernet0/1
+                       [115/30] via 10.0.254.50, 00:44:45, Ethernet0/2
+i L2     172.16.255.26 [115/20] via 10.0.254.55, 00:44:48, Ethernet0/1
+#######
+ 
+
+######
+show ip ro eigrp
+
+#######
+ 
+
+######
+show ip eigrp topology
+
+#######
+ 
+
+######
+show ip eigrp neighbours
+
+#######
+ 
+
+######
+show ip bgp
+BGP table version is 30, local router ID is 172.16.255.24
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal, 
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter, 
+              x best-external, a additional-path, c RIB-compressed, 
+              t secondary path, 
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
+
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>   10.0.254.14/31   10.0.254.41                            0 301 1001 i
+ r>i  10.0.254.50/31   172.16.255.26           20    100      0 ?
+ *>   10.0.254.52/31   10.0.254.50             20         32768 ?
+ r>i  10.0.254.54/31   172.16.255.23           20    100      0 ?
+ *>   10.0.254.56/31   10.0.254.55             20         32768 ?
+ *>i  10.0.254.88/31   172.16.255.25            0    100      0 i
+ *>i  10.0.254.138/31  172.16.255.26            0    100      0 i
+ *>i  10.0.254.140/31  172.16.255.25            0    100      0 i
+ *>   10.77.254.0/27   10.0.254.41                            0 301 1001 i
+ *>   10.77.254.32/27  10.0.254.41                            0 301 1001 i
+ r>i  10.78.254.0/27   172.16.255.26            0    100      0 2042 i
+ *>i  10.78.254.32/27  172.16.255.26            0    100      0 i
+ *>   10.250.0.0/24    10.0.254.41                            0 301 1001 i
+ *>   172.16.255.14/32 10.0.254.41                            0 301 1001 i
+ *>   172.16.255.15/32 10.0.254.41                            0 301 1001 i
+ *>   172.16.255.18/32 10.78.254.1              0             0 2042 i
+ *>   172.16.255.21/32 10.0.254.41              0             0 301 i
+ *>i  172.16.255.22/32 172.16.255.23            0    100      0 101 i
+ *                     10.0.254.41                            0 301 101 i
+ * i  172.16.255.23/32 172.16.255.23            0    100      0 i
+ *>                    10.0.254.50             20         32768 ?
+ * i  172.16.255.24/32 172.16.255.23           20    100      0 ?
+ *>                    0.0.0.0                  0         32768 i
+ * i  172.16.255.25/32 172.16.255.25            0    100      0 i
+ *>                    10.0.254.55             30         32768 ?
+ * i  172.16.255.26/32 172.16.255.23           30    100      0 ?
+ *>                    10.0.254.55             20         32768 ?
+#######
+ 
+
+######
+show ip access-lists
+
+#######
+ 
+
+######
+show route-map all
+STATIC routemaps
+DYNAMIC routemaps
+Current active dynamic routemaps = 0
+#######
+ 
+
+######
+show ip nhrp
+
+#######
+ 
+
+######
+show crypto ikev2 sa
+
+#######
+ 
+
+######
+show crypto ipsec sa
+No SAs found
+#######
+ 

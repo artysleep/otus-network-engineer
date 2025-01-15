@@ -1,0 +1,31 @@
+---
+
+- name: Run show commands on routers
+  hosts: cisco_devices
+  gather_facts: false
+
+  tasks:
+
+    - name: sh run
+      ios_command:
+        commands: wr
+      register: wr_result
+
+    - name: display output
+      debug:
+        var=wr_result.stdout
+
+#    - name: run sh ip arp
+#      ios_command:
+#        commands: sh ip arp
+
+
+#- name: Run command on R1
+#  hosts: 192.168.100.1
+#  gather_facts: false
+
+#  tasks:
+
+#    - name: run sh int status
+#      ios_command:
+#        commands: sh clock

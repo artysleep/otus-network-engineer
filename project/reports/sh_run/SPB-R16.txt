@@ -1,0 +1,236 @@
+Building configuration...
+
+Current configuration : 3388 bytes
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SPB-R16
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 104D000A0618
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name otus.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 password 7 01100F175804
+!
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.16 255.255.255.255
+ ipv6 address FC00::16/128
+!
+interface Ethernet0/0
+ description "to SPB-SW9.e0/3"
+ no ip address
+ duplex auto
+!
+interface Ethernet0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.2 255.255.255.0
+ standby version 2
+ standby 20 ipv6 FC00::20:1/112
+ standby 20 preempt
+ glbp 20 ip 192.168.20.1
+ glbp 20 load-balancing host-dependent
+ ipv6 address FC00::20:2/112
+!
+interface Ethernet0/0.21
+ encapsulation dot1Q 21
+ ip address 192.168.21.2 255.255.255.0
+ standby version 2
+ standby 21 ipv6 FC00::21:1/112
+ standby 21 preempt
+ glbp 21 ip 192.168.21.1
+ glbp 21 load-balancing host-dependent
+ ipv6 address FC00::21:2/112
+!
+interface Ethernet0/1
+ description 'to SPB-R18.e0/0'
+ bandwidth 5000
+ ip address 10.0.254.71 255.255.255.254
+ duplex auto
+ ipv6 address FC02::71/127
+!
+interface Ethernet0/2
+ description "to SPB-SW10.e1/0"
+ no ip address
+ duplex auto
+!
+interface Ethernet0/2.55
+ encapsulation dot1Q 55
+ ip address 172.16.254.18 255.255.255.240
+ standby version 2
+ standby 55 ipv6 FC00::55:17/124
+ standby 55 preempt
+ glbp 55 ip 172.16.254.17
+ glbp 55 load-balancing host-dependent
+ ipv6 address FC00::55:18/124
+!
+interface Ethernet0/3
+ description 'to SPB-R32.e0/0'
+ ip address 10.0.254.74 255.255.255.254
+ duplex auto
+ ipv6 address FC02::74/127
+!
+!
+router eigrp SPB
+ !
+ address-family ipv4 unicast autonomous-system 78
+  !
+  af-interface Ethernet0/3
+   summary-address 0.0.0.0 0.0.0.0
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   summary-address 192.168.20.0 255.255.254.0
+  exit-af-interface
+  !
+  af-interface Ethernet0/0.21
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/0.20
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/2.55
+   passive-interface
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  network 0.0.0.0
+  eigrp router-id 172.16.255.16
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 78
+  !
+  af-interface Ethernet0/3
+   summary-address ::/0
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   summary-address FC00::20:0/111
+  exit-af-interface
+  !
+  af-interface Ethernet0/0.21
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/0.20
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/2.55
+   passive-interface
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  eigrp router-id 172.16.255.16
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.254.70
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+!
+end

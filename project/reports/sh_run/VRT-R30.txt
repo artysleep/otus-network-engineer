@@ -1,0 +1,192 @@
+Building configuration...
+
+  
+Current configuration : 2506 bytes
+!
+! Last configuration change at 12:54:48 UTC Wed Jan 15 2025
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname AND-R31
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 0822455D0A16
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name otus.local
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 password 7 0822455D0A16
+!
+redundancy
+!
+!
+! 
+!
+crypto ikev2 proposal IKEv2PROPOSAL-DMVPN 
+ encryption aes-cbc-128
+ integrity md5
+ group 2
+!
+crypto ikev2 policy IKEv2POLICY-DMVPN 
+ proposal IKEv2PROPOSAL-DMVPN
+!
+crypto ikev2 keyring IKEv2-DMVPN
+ peer dmvpn-node
+  address 0.0.0.0 0.0.0.0
+  pre-shared-key OTUS-DMVPN
+ !
+!
+!
+crypto ikev2 profile IKEv2PROFILE-DMVPN
+ match identity remote address 0.0.0.0 
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local IKEv2-DMVPN
+!
+!
+!
+crypto ipsec transform-set IPSECTS-DMVPN esp-aes esp-md5-hmac 
+ mode transport
+!
+crypto ipsec profile IPSECPROFILE-DMVPN
+ set transform-set IPSECTS-DMVPN 
+ set ikev2-profile IKEv2PROFILE-DMVPN
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.30 255.255.255.255
+!
+interface Tunnel200
+ ip address 10.99.0.30 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ no ip next-hop-self eigrp 99
+ no ip split-horizon eigrp 99
+ ip nhrp authentication OTUS
+ ip nhrp map multicast 10.77.254.33
+ ip nhrp map 10.99.0.1 10.77.254.33
+ ip nhrp network-id 150
+ ip nhrp nhs 10.99.0.1
+ ip tcp adjust-mss 1360
+ tunnel source Ethernet0/0
+ tunnel mode gre multipoint
+ tunnel protection ipsec profile IPSECPROFILE-DMVPN
+!
+interface Ethernet0/0
+ description "to TRD-R25"
+ ip address 10.11.254.62 255.255.255.192
+ duplex auto
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+ duplex auto
+!
+!
+router eigrp 77
+ network 10.81.254.0 0.0.0.255
+ network 10.99.0.0 0.0.0.255
+ network 172.16.255.30 0.0.0.0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.11.254.1
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+!
+end

@@ -1,0 +1,282 @@
+ 
+
+######
+show version
+Cisco IOS Software, Linux Software (I86BI_LINUX-ADVENTERPRISEK9-M), Version 15.7(3)M2, DEVELOPMENT TEST SOFTWARE
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2018 by Cisco Systems, Inc.
+Compiled Wed 28-Mar-18 11:18 by prod_rel_team
+
+ROM: Bootstrap program is Linux
+
+SPB-R16 uptime is 44 minutes
+System returned to ROM by reload at 0
+System image file is "unix:/opt/unetlab/addons/iol/bin/i86bi_Linux-L3-AdvEnterpriseK9-M2_1"
+Last reload reason: Unknown reason
+
+
+
+This product contains cryptographic features and is subject to United
+States and local country laws governing import, export, transfer and
+use. Delivery of Cisco cryptographic products does not imply
+third-party authority to import, export, distribute or use encryption.
+Importers, exporters, distributors and users are responsible for
+compliance with U.S. and local country laws. By using this product you
+agree to comply with applicable laws and regulations. If you are unable
+to comply with U.S. and local laws, return this product immediately.
+
+A summary of U.S. laws governing Cisco cryptographic products may be found at:
+http://www.cisco.com/wwl/export/crypto/tool/stqrg.html
+
+If you require further assistance please contact us by sending email to
+export@cisco.com.
+
+Linux Unix (Intel-x86) processor with 863257K bytes of memory.
+Processor board ID 67109120
+4 Ethernet interfaces
+1024K bytes of NVRAM.
+
+
+
+Configuration register is 0x0
+#######
+ 
+
+######
+show arp
+Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  10.0.254.70            44   aabb.cc01.2000  ARPA   Ethernet0/1
+Internet  10.0.254.71             -   aabb.cc01.0010  ARPA   Ethernet0/1
+Internet  10.0.254.74             -   aabb.cc01.0030  ARPA   Ethernet0/3
+Internet  10.0.254.75            44   aabb.cc02.0000  ARPA   Ethernet0/3
+Internet  172.16.254.17           -   0007.b400.3701  ARPA   Ethernet0/2.55
+Internet  172.16.254.18           -   aabb.cc01.0020  ARPA   Ethernet0/2.55
+Internet  172.16.254.19          40   aabb.cc01.1020  ARPA   Ethernet0/2.55
+Internet  172.16.254.21          44   aabb.cc80.9000  ARPA   Ethernet0/2.55
+Internet  192.168.20.1            -   0007.b400.1401  ARPA   Ethernet0/0.20
+Internet  192.168.20.2            -   aabb.cc01.0000  ARPA   Ethernet0/0.20
+Internet  192.168.20.3           44   aabb.cc01.1000  ARPA   Ethernet0/0.20
+Internet  192.168.21.1            -   0007.b400.1501  ARPA   Ethernet0/0.21
+Internet  192.168.21.2            -   aabb.cc01.0000  ARPA   Ethernet0/0.21
+Internet  192.168.21.3           44   aabb.cc01.1000  ARPA   Ethernet0/0.21
+#######
+ 
+
+######
+show ip int br
+Interface                  IP-Address      OK? Method Status                Protocol
+Ethernet0/0                unassigned      YES NVRAM  up                    up      
+Ethernet0/0.20             192.168.20.2    YES NVRAM  up                    up      
+Ethernet0/0.21             192.168.21.2    YES NVRAM  up                    up      
+Ethernet0/1                10.0.254.71     YES NVRAM  up                    up      
+Ethernet0/2                unassigned      YES NVRAM  up                    up      
+Ethernet0/2.55             172.16.254.18   YES NVRAM  up                    up      
+Ethernet0/3                10.0.254.74     YES NVRAM  up                    up      
+Loopback0                  172.16.255.16   YES NVRAM  up                    up
+#######
+ 
+
+######
+show int desc
+Interface                      Status         Protocol Description
+Et0/0                          up             up       "to SPB-SW9.e0/3"
+Et0/0.20                       up             up       
+Et0/0.21                       up             up       
+Et0/1                          up             up       'to SPB-R18.e0/0'
+Et0/2                          up             up       "to SPB-SW10.e1/0"
+Et0/2.55                       up             up       
+Et0/3                          up             up       'to SPB-R32.e0/0'
+Lo0                            up             up
+#######
+ 
+
+######
+show ip ro st
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+
+Gateway of last resort is 10.0.254.70 to network 0.0.0.0
+
+S*    0.0.0.0/0 [1/0] via 10.0.254.70
+#######
+ 
+
+######
+show ip ro os
+
+#######
+ 
+
+######
+show ip ospf topology-info
+
+#######
+ 
+
+######
+show ip ospf neighbor
+
+#######
+ 
+
+######
+show ip ro bgp
+
+#######
+ 
+
+######
+show ip bgp
+% BGP not active
+#######
+ 
+
+######
+show ip bgp nexthops
+% BGP not active
+#######
+ 
+
+######
+show ip ro isis
+
+#######
+ 
+
+######
+show ip ro eigrp
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+
+Gateway of last resort is 10.0.254.70 to network 0.0.0.0
+
+      10.0.0.0/8 is variably subnetted, 9 subnets, 4 masks
+D        10.0.254.72/31 [90/2048000] via 10.0.254.70, 00:44:52, Ethernet0/1
+D        10.77.78.0/31 [90/77312000] via 10.0.254.70, 00:42:59, Ethernet0/1
+D        10.78.254.0/27 [90/2048000] via 10.0.254.70, 00:44:52, Ethernet0/1
+D        10.78.254.32/27 [90/2048000] via 10.0.254.70, 00:44:52, Ethernet0/1
+D EX     10.250.0.0/24 [170/77312000] via 10.0.254.70, 00:42:59, Ethernet0/1
+      172.16.0.0/16 is variably subnetted, 8 subnets, 3 masks
+D EX     172.16.254.0/28 [170/77312000] via 10.0.254.70, 00:42:59, Ethernet0/1
+D EX     172.16.254.32/29 
+           [170/77312000] via 10.0.254.70, 00:42:59, Ethernet0/1
+D        172.16.255.17/32 [90/2048640] via 10.0.254.70, 00:44:48, Ethernet0/1
+D        172.16.255.18/32 [90/1536640] via 10.0.254.70, 00:44:52, Ethernet0/1
+D        172.16.255.32/32 [90/1024640] via 10.0.254.75, 00:44:52, Ethernet0/3
+D EX  192.168.10.0/23 [170/77312000] via 10.0.254.70, 00:42:59, Ethernet0/1
+D     192.168.20.0/23 is a summary, 00:44:48, Null0
+D EX  192.168.30.0/23 [170/77312000] via 10.0.254.70, 00:42:59, Ethernet0/1
+#######
+ 
+
+######
+show ip eigrp topology
+EIGRP-IPv4 VR(SPB) Topology Table for AS(78)/ID(172.16.255.16)
+Codes: P - Passive, A - Active, U - Update, Q - Query, R - Reply,
+       r - reply Status, s - sia Status 
+
+P 192.168.10.0/23, 1 successors, FD is 9895936000
+        via 10.0.254.70 (9895936000/9830400000), Ethernet0/1
+P 10.0.254.72/31, 1 successors, FD is 262144000
+        via 10.0.254.70 (262144000/131072000), Ethernet0/1
+P 172.16.255.17/32, 1 successors, FD is 262225920
+        via 10.0.254.70 (262225920/131153920), Ethernet0/1
+P 192.168.21.0/24, 1 successors, FD is 131072000
+        via Connected, Ethernet0/0.21
+P 172.16.255.16/32, 1 successors, FD is 163840
+        via Connected, Loopback0
+P 10.78.254.0/27, 1 successors, FD is 262144000
+        via 10.0.254.70 (262144000/131072000), Ethernet0/1
+P 172.16.255.32/32, 1 successors, FD is 131153920
+        via 10.0.254.75 (131153920/163840), Ethernet0/3
+P 10.78.254.32/27, 1 successors, FD is 262144000
+        via 10.0.254.70 (262144000/131072000), Ethernet0/1
+P 10.0.254.74/31, 1 successors, FD is 131072000
+        via Connected, Ethernet0/3
+P 192.168.30.0/23, 1 successors, FD is 9895936000
+        via 10.0.254.70 (9895936000/9830400000), Ethernet0/1
+P 10.250.0.0/24, 1 successors, FD is 9895936000
+        via 10.0.254.70 (9895936000/9830400000), Ethernet0/1
+P 172.16.254.16/28, 1 successors, FD is 131072000
+        via Connected, Ethernet0/2.55
+P 0.0.0.0/0, 1 successors, FD is 163840
+        via Summary (163840/0), Null0
+        via 10.0.254.70 (196673536/131072), Ethernet0/1
+P 10.77.78.0/31, 1 successors, FD is 9895936000
+        via 10.0.254.70 (9895936000/9830400000), Ethernet0/1
+P 172.16.254.32/29, 1 successors, FD is 9895936000
+        via 10.0.254.70 (9895936000/9830400000), Ethernet0/1
+P 172.16.254.0/28, 1 successors, FD is 9895936000
+        via 10.0.254.70 (9895936000/9830400000), Ethernet0/1
+P 172.16.255.18/32, 1 successors, FD is 196689920
+        via 10.0.254.70 (196689920/163840), Ethernet0/1
+P 10.0.254.70/31, 1 successors, FD is 196608000
+        via Connected, Ethernet0/1
+P 192.168.20.0/23, 1 successors, FD is 131072000
+        via Summary (131072000/0), Null0
+P 192.168.20.0/24, 1 successors, FD is 131072000
+        via Connected, Ethernet0/0.20
+#######
+ 
+
+######
+show ip eigrp neighbours
+EIGRP-IPv4 VR(SPB) Address-Family Neighbors for AS(78)
+H   Address                 Interface              Hold Uptime   SRTT   RTO  Q  Seq
+                                                   (sec)         (ms)       Cnt Num
+1   10.0.254.75             Et0/3                    14 00:44:54   12   100  0  4
+0   10.0.254.70             Et0/1                    12 00:44:54    7   100  0  14
+#######
+ 
+
+######
+show ip bgp
+% BGP not active
+#######
+ 
+
+######
+show ip access-lists
+
+#######
+ 
+
+######
+show route-map all
+STATIC routemaps
+DYNAMIC routemaps
+Current active dynamic routemaps = 0
+#######
+ 
+
+######
+show ip nhrp
+
+#######
+ 
+
+######
+show crypto ikev2 sa
+
+#######
+ 
+
+######
+show crypto ipsec sa
+No SAs found
+#######
+ 

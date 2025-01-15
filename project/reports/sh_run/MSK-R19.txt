@@ -1,0 +1,241 @@
+Building configuration...
+
+Current configuration : 3582 bytes
+!
+! No configuration change since last restart
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname MSK-R19
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 14141B180F0B
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 192.168.10.1
+ip dhcp excluded-address 192.168.10.2
+ip dhcp excluded-address 192.168.10.3
+ip dhcp excluded-address 192.168.11.3
+ip dhcp excluded-address 192.168.11.2
+ip dhcp excluded-address 192.168.11.1
+ip dhcp excluded-address 192.168.11.129 192.168.11.254
+ip dhcp excluded-address 192.168.10.129 192.168.10.254
+!
+ip dhcp pool vlan10
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1 
+ domain-name otus.lab.com
+!
+ip dhcp pool vlan11
+ network 192.168.11.0 255.255.255.0
+ default-router 192.168.11.1 
+ domain-name otus.lab.com
+!
+!
+!
+no ip domain lookup
+ip domain name otus.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 password 7 121A0C041104
+!
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.19 255.255.255.255
+ ip ospf 1 area 101
+ ipv6 address FC00::12/128
+ ipv6 address FC00::19/127
+ ospfv3 2 ipv6 area 101
+!
+interface Ethernet0/0
+ description "to R14.e0/3"
+ ip address 10.0.254.5 255.255.255.254
+ ip ospf network point-to-point
+ ip ospf 1 area 101
+ duplex auto
+ ipv6 address FC02::5/127
+ ospfv3 network point-to-point
+ ospfv3 2 ipv6 area 101
+!
+interface Ethernet0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.2 255.255.255.0
+ standby version 2
+ standby 10 ipv6 FC10::1/104
+ standby 10 preempt
+ ip ospf 1 area 10
+ ipv6 address FC10::2/104
+ ntp broadcast
+ ospfv3 2 ipv6 area 10
+ vrrp 10 ip 192.168.10.1
+!
+interface Ethernet0/0.11
+ encapsulation dot1Q 11
+ ip address 192.168.11.2 255.255.255.0
+ standby version 2
+ standby 11 ipv6 FC11::1/104
+ standby 11 preempt
+ ip ospf 1 area 10
+ ipv6 address FC11::2/104
+ ntp broadcast
+ ospfv3 2 ipv6 area 10
+ vrrp 11 ip 192.168.11.1
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/1.55
+ description MGMT
+ encapsulation dot1Q 55
+ ip address 172.16.254.2 255.255.255.240
+ standby version 2
+ standby 55 ipv6 FC55::1/104
+ standby 55 preempt
+ ip ospf 1 area 10
+ ipv6 address FE55::2/104
+ ntp broadcast
+ ospfv3 2 ipv6 area 10
+ vrrp 55 ip 172.16.254.1
+!
+interface Ethernet0/2
+ description "to R14.e0/0"
+ no ip address
+ ip ospf 1 area 10
+ shutdown
+ duplex auto
+ ipv6 address FC02::13/127
+ ntp broadcast
+ ospfv3 2 ipv6 area 10
+!
+interface Ethernet0/3
+ description "to R15.e0/3"
+ no ip address
+ ip ospf 1 area 10
+ shutdown
+ duplex auto
+ ipv6 address FC02::7/127
+ ntp broadcast
+ ospfv3 2 ipv6 area 10
+!
+router ospfv3 2
+ router-id 172.16.255.19
+ area 10 stub
+ area 101 stub
+ !
+ address-family ipv6 unicast
+  passive-interface Ethernet0/0.11
+  passive-interface Ethernet0/1.55
+ exit-address-family
+!
+router ospf 1
+ router-id 172.16.255.19
+ priority 10
+ area 10 stub
+ area 101 stub
+ passive-interface Ethernet0/0.11
+ passive-interface Ethernet0/1.55
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+ntp master 1
+ntp update-calendar
+ntp server 172.16.255.12
+ntp server 172.16.255.13
+!
+end

@@ -1,0 +1,31 @@
+---
+
+- name: Run show commands on routers
+  hosts: cisco_devices
+  gather_facts: false
+
+  tasks:
+
+    - name: sh run
+      ios_command:
+        commands: sh run
+      register: sh_run_result
+
+    - name: Copy facts to files
+      copy:
+        content: "{{ sh_run_result.stdout[0] }}"
+        dest: "/home/gis/reports/sh_run/{{inventory_hostname}}.txt"
+    
+# - name: display output
+#   debug:
+#     var=sh_run_result.stdout[0]
+
+#- name: Run command on R1
+#  hosts: 192.168.100.1
+#  gather_facts: false
+
+#  tasks:
+
+#    - name: run sh int status
+#      ios_command:
+#        commands: sh clock

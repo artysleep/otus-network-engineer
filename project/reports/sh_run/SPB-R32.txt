@@ -1,0 +1,164 @@
+Building configuration...
+
+  
+Current configuration : 1658 bytes
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SPB-R32
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 104D000A0618
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name otus.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 password 7 1511021F0725
+!
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.32 255.255.255.255
+ ipv6 address FC00::32/128
+!
+interface Ethernet0/0
+ description 'to SPB-R16.e0/3'
+ ip address 10.0.254.75 255.255.255.254
+ duplex auto
+ ipv6 address FC02::75/127
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+ duplex auto
+!
+!
+router eigrp SPB
+ !
+ address-family ipv4 unicast autonomous-system 78
+  !
+  topology base
+  exit-af-topology
+  network 0.0.0.0
+  eigrp router-id 172.16.255.32
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 78
+  !
+  topology base
+  exit-af-topology
+  eigrp router-id 172.16.255.32
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+!
+end

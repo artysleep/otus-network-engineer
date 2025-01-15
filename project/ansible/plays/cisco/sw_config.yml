@@ -1,0 +1,7 @@
+---
+
+- name: Config new vlan
+  hosts: cisco_switches
+  gather_facts: false
+  tasks:
+    

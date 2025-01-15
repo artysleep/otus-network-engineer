@@ -1,0 +1,164 @@
+Building configuration...
+
+  
+Current configuration : 1699 bytes
+!
+! No configuration change since last restart
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname MSK-R20
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable password 7 0822455D0A16
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+clock timezone MSK 3 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name otus.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 password 7 094F471A1A0A
+!
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.16.255.20 255.255.255.255
+ ip ospf 1 area 102
+ ipv6 address FC00::20/128
+ ospfv3 2 ipv6 area 102
+!
+interface Ethernet0/0
+ description "to R15.e0/3"
+ ip address 10.0.254.11 255.255.255.254
+ ip ospf network point-to-point
+ ip ospf 1 area 102
+ duplex auto
+ ipv6 address FC02::11/127
+ ospfv3 2 network point-to-point
+ ospfv3 2 ipv6 area 102
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+ duplex auto
+!
+router ospfv3 2
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+router ospf 1
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.254.10
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ transport input ssh
+!
+ntp server 172.16.255.12
+ntp server 172.16.255.13
+!
+end

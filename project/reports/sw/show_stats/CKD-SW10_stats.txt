@@ -1,0 +1,215 @@
+#######
+show version
+Cisco IOS Software, Linux Software (I86BI_LINUXL2-ADVENTERPRISEK9-M), Version 15.2(CML_NIGHTLY_20190423)FLO_DSGS7, EARLY DEPLOYMENT DEVELOPMENT BUILD, synced to  V152_6_0_81_E
+Technical Support: http://www.cisco.com/techsupport
+Copyright (c) 1986-2019 by Cisco Systems, Inc.
+Compiled Tue 23-Apr-19 02:38 by mmen
+
+ROM: Bootstrap program is Linux
+
+CKD-SW29 uptime is 2 hours, 51 minutes
+System returned to ROM by reload at 0
+System image file is "unix:/opt/unetlab/addons/iol/bin/i86bi_linux_l2-adventerprisek9-ms.SS"
+Last reload reason: Unknown reason
+
+
+
+This product contains cryptographic features and is subject to United
+States and local country laws governing import, export, transfer and
+use. Delivery of Cisco cryptographic products does not imply
+third-party authority to import, export, distribute or use encryption.
+Importers, exporters, distributors and users are responsible for
+compliance with U.S. and local country laws. By using this product you
+agree to comply with applicable laws and regulations. If you are unable
+to comply with U.S. and local laws, return this product immediately.
+
+A summary of U.S. laws governing Cisco cryptographic products may be found at:
+http://www.cisco.com/wwl/export/crypto/tool/stqrg.html
+
+If you require further assistance please contact us by sending email to
+export@cisco.com.
+
+Linux Unix (Intel-x86) processor with 921491K bytes of memory.
+Processor board ID 67109328
+4 Ethernet interfaces
+1 Virtual Ethernet interface
+1024K bytes of NVRAM.
+
+Configuration register is 0x0
+#######
+ 
+
+#######
+show mac address-table:
+Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  30    aabb.cc01.c020    DYNAMIC     Et0/2
+  31    aabb.cc01.c020    DYNAMIC     Et0/2
+  55    aabb.cc01.c020    DYNAMIC     Et0/2
+Total Mac Addresses for this criterion: 3
+#######
+ 
+
+#######
+show arp:
+Protocol  Address          Age (min)  Hardware Addr   Type   Interface
+Internet  172.16.254.33         170   aabb.cc01.c020  ARPA   Vlan55
+Internet  172.16.254.34           -   aabb.cc81.d000  ARPA   Vlan55
+#######
+ 
+
+#######
+show ip int br:
+Interface              IP-Address      OK? Method Status                Protocol
+Ethernet0/0            unassigned      YES unset  up                    up      
+Ethernet0/1            unassigned      YES unset  up                    up      
+Ethernet0/2            unassigned      YES unset  up                    up      
+Ethernet0/3            unassigned      YES unset  up                    up      
+Vlan55                 172.16.254.34   YES NVRAM  up                    up
+#######
+ 
+
+#######
+show int desc:
+Interface                      Status         Protocol Description
+Et0/0                          up             up       "to VPC30" 
+Et0/1                          up             up       "to VPC31" 
+Et0/2                          up             up       "to CKD-R28.e0/2"
+Et0/3                          up             up       
+Vl55                           up             up       "MGMT"
+#######
+ 
+
+#######
+show vlan:
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Et0/3
+30   VLAN0030                         active    Et0/0
+31   VLAN0031                         active    Et0/1
+55   VLAN0055                         active    
+1002 fddi-default                     act/unsup 
+1003 token-ring-default               act/unsup 
+1004 fddinet-default                  act/unsup 
+1005 trnet-default                    act/unsup 
+
+VLAN Type  SAID       MTU   Parent RingNo BridgeNo Stp  BrdgMode Trans1 Trans2
+---- ----- ---------- ----- ------ ------ -------- ---- -------- ------ ------
+1    enet  100001     1500  -      -      -        -    -        0      0   
+30   enet  100030     1500  -      -      -        -    -        0      0   
+31   enet  100031     1500  -      -      -        -    -        0      0   
+55   enet  100055     1500  -      -      -        -    -        0      0   
+1002 fddi  101002     1500  -      -      -        -    -        0      0   
+1003 tr    101003     1500  -      -      -        -    -        0      0   
+1004 fdnet 101004     1500  -      -      -        ieee -        0      0   
+1005 trnet 101005     1500  -      -      -        ibm  -        0      0   
+
+Remote SPAN VLANs
+------------------------------------------------------------------------------
+
+
+Primary Secondary Type              Ports
+------- --------- ----------------- ------------------------------------------
+#######
+ 
+
+#######
+show interfaces trunk:
+Port        Mode             Encapsulation  Status        Native vlan
+Et0/2       on               802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Et0/2       30-31,55
+
+Port        Vlans allowed and active in management domain
+Et0/2       30-31,55
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Et0/2       30-31,55
+#######
+ 
+
+#######
+show etherchannel:
+Channel-group listing: 
+		----------------------
+#######
+ 
+
+#######
+show spanning-tree:
+VLAN0001
+  Spanning tree enabled protocol ieee
+  Root ID    Priority    32769
+             Address     aabb.cc01.d000
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32769  (priority 32768 sys-id-ext 1)
+             Address     aabb.cc01.d000
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Et0/3               Desg FWD 100       128.4    P2p 
+
+
+
+VLAN0030
+  Spanning tree enabled protocol ieee
+  Root ID    Priority    32798
+             Address     aabb.cc01.d000
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32798  (priority 32768 sys-id-ext 30)
+             Address     aabb.cc01.d000
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Et0/0               Desg FWD 100       128.1    P2p 
+Et0/2               Desg FWD 100       128.3    P2p 
+
+
+
+VLAN0031
+  Spanning tree enabled protocol ieee
+  Root ID    Priority    32799
+             Address     aabb.cc01.d000
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32799  (priority 32768 sys-id-ext 31)
+             Address     aabb.cc01.d000
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Et0/1               Desg FWD 100       128.2    P2p 
+Et0/2               Desg FWD 100       128.3    P2p 
+
+
+
+VLAN0055
+  Spanning tree enabled protocol ieee
+  Root ID    Priority    32823
+             Address     aabb.cc01.d000
+             This bridge is the root
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+
+  Bridge ID  Priority    32823  (priority 32768 sys-id-ext 55)
+             Address     aabb.cc01.d000
+             Hello Time   2 sec  Max Age 20 sec  Forward Delay 15 sec
+             Aging Time  300 sec
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- --------------------------------
+Et0/2               Desg FWD 100       128.3    P2p
+######

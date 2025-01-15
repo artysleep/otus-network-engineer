@@ -1,0 +1,64 @@
+---
+
+- name: Run show command on routers
+  hosts: cisco_routers
+  gather_facts: false
+
+  tasks:
+      - name: show
+        ios_command:
+          commands: 
+            - show version
+            - show arp
+            - show ip int br
+            - show int desc
+            - show ip ro st
+            - show ip ro os
+            - show ip ospf topology-info
+            - show ip ospf neighbor
+            - show ip ro bgp
+            - show ip bgp
+            - show ip bgp nexthops
+            - show ip ro isis
+            - show ip ro eigrp
+            - show ip eigrp topology
+            - show ip eigrp neighbors
+            - show ip bgp
+            - show ip access-lists
+            - show route-map all
+            - show ip nhrp
+            - show crypto ikev2 sa
+            - show crypto ipsec sa
+        register: sh_cmds
+      
+      - name: Copy facts to files
+        copy:
+          content: "
+            \n\n######\nshow version\n{{ sh_cmds.stdout[0] }}\n#######\n
+            \n\n######\nshow arp\n{{ sh_cmds.stdout[1] }}\n#######\n
+            \n\n######\nshow ip int br\n{{ sh_cmds.stdout[2] }}\n#######\n
+            \n\n######\nshow int desc\n{{ sh_cmds.stdout[3] }}\n#######\n
+            \n\n######\nshow ip ro st\n{{ sh_cmds.stdout[4] }}\n#######\n
+            \n\n######\nshow ip ro os\n{{ sh_cmds.stdout[5] }}\n#######\n
+            \n\n######\nshow ip ospf topology-info\n{{ sh_cmds.stdout[6] }}\n#######\n
+            \n\n######\nshow ip ospf neighbor\n{{ sh_cmds.stdout[7] }}\n#######\n
+            \n\n######\nshow ip ro bgp\n{{ sh_cmds.stdout[8] }}\n#######\n
+            \n\n######\nshow ip bgp\n{{ sh_cmds.stdout[9] }}\n#######\n
+            \n\n######\nshow ip bgp nexthops\n{{ sh_cmds.stdout[10] }}\n#######\n
+            \n\n######\nshow ip ro isis\n{{ sh_cmds.stdout[11] }}\n#######\n
+            \n\n######\nshow ip ro eigrp\n{{ sh_cmds.stdout[12] }}\n#######\n
+            \n\n######\nshow ip eigrp topology\n{{ sh_cmds.stdout[13] }}\n#######\n
+            \n\n######\nshow ip eigrp neighbours\n{{ sh_cmds.stdout[14] }}\n#######\n
+            \n\n######\nshow ip bgp\n{{ sh_cmds.stdout[15] }}\n#######\n
+            \n\n######\nshow ip access-lists\n{{ sh_cmds.stdout[16] }}\n#######\n
+            \n\n######\nshow route-map all\n{{ sh_cmds.stdout[17] }}\n#######\n
+            \n\n######\nshow ip nhrp\n{{ sh_cmds.stdout[18] }}\n#######\n
+            \n\n######\nshow crypto ikev2 sa\n{{ sh_cmds.stdout[19] }}\n#######\n
+            \n\n######\nshow crypto ipsec sa\n{{ sh_cmds.stdout[20] }}\n#######\n
+            "
+          dest: "/home/gis/reports/ro/show_stats/{{inventory_hostname}}_stats.txt"
+
+      
+ #     - name: display output
+ #       debug:
+ #        var=sh_mac_add.stdout

@@ -1,0 +1,25 @@
+---
+
+- name: Config banners
+  hosts: cisco_devices
+  gather_facts: false
+  tasks:
+
+  - name: Configure the login banner
+    cisco.ios.ios_banner:
+      banner: login
+      text: |
+        * * * * * * * * * * W A R N I N G * * * * * * * * * *
+        This computer system is the property of the Artys Home LAB. It is for authorized use only.  
+        LOG OFF IMMEDIATELY if you do not have access permission from owner of this LAB.
+        * * * * * * * * * * * * * * * * * * * * * * * *
+      state: present
+
+  - name: Configure the login banner
+    cisco.ios.ios_banner:
+      banner: exec
+      text: |
+        * * * * * * * * * * W A R N I N G * * * * * * * * * *
+        Welcome to {{inventory_hostname}}. Do not broke this system please.
+        * * * * * * * * * * * * * * * * * * * * * * *
+      state: present
